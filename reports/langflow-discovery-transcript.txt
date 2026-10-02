@@ -1,0 +1,313 @@
+SynCare Langflow MCP — captured tool outputs (discovery, 2026-10-02)
+SECRET-FREE: no tokens/keys/env values. Listing inventory and search results are summarized, not all verbatim; exact describe JSON/tool schema excerpts remain captured.
+
+================================================================================
+[1] mcp__langflow_list_flows  args: {}  -> SUCCESS (first Langflow call)
+================================================================================
+35 flows. Inventory (id | name | node_count):
+f4a3ae2e-4f51-4258-8896-adbd94b21159 | Basic Prompting | 6
+4e466ab2-67a6-42d9-8009-c2b520374606 | Blog Writer | 6
+31b6a5f4-72d0-4b44-bb4e-6456466e5f0e | Content Aggregator | 8
+8f4df495-a1e2-4e81-a2c9-ee2eb6067c2a | Custom Component Generator | 6
+f2cb14ad-feb7-4b80-8c05-bbf8690893ec | Deep Research Agent | 9
+f01ed956-db82-4a72-ae83-50de379d07ef | Document Q&A | 7
+19d77cf6-4899-4f25-aad0-de9e99baf519 | Financial Report Parser | 5
+da33453a-f217-4a78-a8c6-e88d837c1548 | Hybrid Search RAG | 11
+9f30de7d-5252-4d69-a961-42a4d626ceb2 | Image Sentiment Analysis | 4
+0802cdc6-b2e2-4126-9ba4-4971bcfa2f18 | Instagram Copywriter | 6
+1e516608-23da-44c6-9a79-b0dd8cae3946 | Knowledge Retrieval | 5
+63c54a0c-3eb2-40c2-8097-6dd4cae2db1b | Market Research | 7
+404a53d4-d5c2-4f62-8a1d-9f7c7de930c4 | Meeting Summary | 7
+018102d7-9925-4f44-8406-28e843f9948c | Memory Chatbot | 5
+0233a247-881b-422f-b583-be89ff648a26 | Multi Agent Flow | 6
+27546354-bbce-4640-b1cf-78ccc06d406d | Portfolio Website Code Generator | 4
+8318bf58-2c93-43e9-8d6a-56ec330640f5 | Price Deal Finder | 7
+b56bd29f-7171-4cc0-a769-6f73e36cdeee | Research Translation Loop | 7
+1d71013f-8b74-4fb6-bd7d-36cfedc5520b | SEO Keyword Generator | 4
+aeec9413-19fe-4e18-916d-075eb99e300b | SaaS Pricing | 5
+31d4b609-a4c5-4807-959f-41621d1c1af0 | Sequential Tasks Agents | 8
+548c39aa-febe-408a-a808-43c034d55557 | Simple Agent | 6
+5faec414-3015-402f-b46a-ac2af28b94a1 | Social Media Agent | 6
+2267fb13-7657-4455-a7bc-9261ca256170 | Text Sentiment Analysis | 8
+7e6aba76-e287-4e7e-9fea-8fbb81ec94fc | Travel Planning Agents | 9
+9729c719-24aa-48a8-9e0d-4a62c914d0c8 | Twitter Thread Generator | 5
+e33c5ae1-9a11-487a-8faf-b3a8f3d3c164 | Vector Store RAG | 7
+2e4936da-a9b9-4c7b-925d-2be45f44f821 | Structured Data Analysis Agent | 22
+919a9496-9a94-4a76-bab0-f72795864ba5 | YouTube Analysis | 9
+f9d74059-16d7-44e8-a7b5-b3ad4bb2ea21 | New Flow | 0 (empty canvas)
+a6d2fbaa-6f8d-4c9f-abef-2d23aa289b42 | Onboarding Buddy System (Starter Project) | 23
+c4847d94-1380-4027-9a06-45465ddd6b8b | Self-Care Buddy | 9
+4c1aea88-1f89-4bd8-81b9-c8689cc50a65 | Quick Tutor - Complete | 14
+411ffdb0-2d1f-4af3-9889-224cf880313b | Save Study Notes - Complete | 8
+4842a4d0-ab2e-406b-abc8-c77bc11616a4 | Study Planner - Complete | 8
+(f9f2b34d... Save Study Notes - Complete (Backup) and 7b5503fd... Meeting Action
+Assistant - Complete also present in the full listing.)
+
+NO flow name matches SynCare targets (register_discharge_summary,
+record_patient_checkin, or any discharge/triage-named flow). No collision.
+
+Full raw JSON was returned live (graph + spec_summary per flow); reproducible with
+the same zero-arg call. Harness artifacts of the raw outputs: artifact://10, artifact://22.
+
+================================================================================
+[2] mcp__langflow_search_component_types — captured outputs
+================================================================================
+{"query":"gemini"}            -> []  (empty)
+{"query":"chat"}              -> ChatInput (input_output), ChatOutput (input_output),
+                                 Memory ("Message History"), ext:azure:AzureChat[OI]Component@official,
+                                 ext:baidu:QianfanChatEndpointComponent@official,
+                                 ext:cassandra:CassandraChatMemory@official,
+                                 ext:datastax:AstraDBChatMemory@official,
+                                 ext:mem0:Mem0MemoryComponent@official,
+                                 ext:ollama:ChatOllamaComponent@official,
+                                 ext:redis:RedisIndexChatMemory@official,
+                                 ext:twelvelabs:TwelveLabsPegasus@official,
+                                 ext:valkey:ValkeyIndexChatMemory@official,
+                                 ext:vertexai:ChatVertexAIComponent@official
+{"query":"json"}              -> Operations ("Data Operations"), TypeConverterComponent,
+                                 ext:notion:NotionListPages@official
+{"query":"python"}            -> PythonREPLComponent ("Python Interpreter")
+{"query":"branch"}            -> []  (empty)
+{"query":"human"}             -> HumanInput (flow_controls),
+                                 ext:nvidia:NvidiaSystemAssistComponent@official
+{"query":"google"}            -> composio Google* components; ext:google:BigQueryExecutorComponent@official;
+                                 ext:google:GoogleGenerativeAIComponent@official ("Google Generative AI",
+                                 "Generate text using Google Generative AI.");
+                                 ext:google:GoogleGenerativeAIEmbeddingsComponent@official;
+                                 ext:google:GoogleSearchAPICore@official; ext:google:GoogleSerperAPICore@official;
+                                 ext:searchapi:SearchComponent@official; ext:vertexai:VertexAIEmbeddingsComponent@official
+{"query":"parser"}            -> ParserComponent ("Parser", "Extracts text using a template.")
+{"query":"custom"}            -> CustomComponent ("Custom Component",
+                                 "Use as a template to create your own component."), ...
+{"category":"flow_controls"}  -> ConditionalRouter ("If-Else"), HumanInput, Listen,
+                                 LoopComponent, Notify, RunFlow
+{"query":"mcp"}               -> MCPTools ("MCP Tools", "Connect to an MCP server to use its tools."),
+                                 ext:confluent:ConfluentContextEngineComponent@official,
+                                 ext:exa:ExaSearchToolkit@official,
+                                 ext:ibm:WatsonxDataMCPComponent@official
+{"query":"ibm"}               -> ext:ibm:DB2VectorStoreComponent@official,
+                                 ext:ibm:WatsonxAIComponent@official,
+                                 ext:ibm:WatsonxDataMCPComponent@official,
+                                 ext:ibm:WatsonxDataPrestoComponent@official,
+                                 ext:ibm:WatsonxEmbeddingsComponent@official
+{"query":"structured"}        -> Smart Transform, StructuredOutput, ext:agentql:AgentQL@official, ...
+{"query":"conditional"}       -> ConditionalRouter
+
+================================================================================
+[3] mcp__langflow_describe_component_type — captured outputs (verbatim JSON)
+================================================================================
+--- ChatInput ---
+{"type":"ChatInput","category":"input_output","display_name":"Chat Input",
+ "description":"Get chat inputs from the Playground.",
+ "outputs":[{"name":"message","types":["Message"]}],"inputs":[],
+ "fields":[{"name":"input_value","type":"str","default":""}],
+ "advanced_fields":["context_id","files","sender","sender_name","session_id","should_store_message"],
+ "constrained_advanced_fields":[{"name":"sender","type":"str","options":["Machine","User"],"default":"User"}]}
+
+--- ChatOutput ---
+{"type":"ChatOutput","category":"input_output","display_name":"Chat Output",
+ "description":"Display a chat message in the Playground.",
+ "outputs":[{"name":"message","types":["Message"]}],
+ "inputs":[{"name":"input_value","input_types":["Data","JSON","DataFrame","Table","Message"],
+            "type":"other","required":true}],
+ "advanced_fields":["clean_data","context_id","data_template","sender","sender_name",
+                    "session_id","should_store_message"],
+ "constrained_advanced_fields":[{"name":"sender","type":"str","options":["Machine","User"],"default":"Machine"}]}
+
+--- ext:google:GoogleGenerativeAIComponent@official ---
+{"type":"ext:google:GoogleGenerativeAIComponent@official","category":"google",
+ "display_name":"Google Generative AI",
+ "description":"Generate text using Google Generative AI.",
+ "outputs":[{"name":"text_output","types":["Message"]},
+            {"name":"model_output","types":["LanguageModel"]}],
+ "inputs":[{"name":"input_value","input_types":["Message"],"type":"str","required":false},
+           {"name":"system_message","input_types":["Message"],"type":"str","required":false}],
+ "fields":[
+   {"name":"api_key","type":"str","required":true},
+   {"name":"max_output_tokens","type":"int","default":0},
+   {"name":"model_name","type":"str","combobox":true,"default":"gemini-2.5-flash",
+    "options":["gemini-2.5-flash","gemini-2.5-pro","gemini-2.5-flash-lite",
+      "gemini-2.5-flash-preview-09-2025","gemini-2.5-flash-lite-preview-09-2025",
+      "gemini-2.5-flash-image","gemini-1.5-pro","gemini-1.5-flash","gemini-1.5-flash-8b",
+      "gemini-2.0-flash","gemini-2.0-flash-lite",
+      "gemini-2.0-flash-preview-image-generation","gemini-3.1-pro-preview",
+      "gemini-3-flash-preview","gemini-3.1-flash-lite-preview",
+      "gemini-3-pro-image-preview","gemini-3.1-flash-image-preview"]},
+   {"name":"temperature","type":"slider","default":0.1,
+    "range_spec":{"min":0.0,"max":1.0,"step":0.01,"step_type":"float"}},
+   {"name":"tool_model_enabled","type":"bool","default":false}],
+ "advanced_fields":["n","stream","top_k","top_p"]}
+
+--- ParserComponent ---
+{"type":"ParserComponent","category":"processing","display_name":"Parser",
+ "description":"Extracts text using a template.",
+ "outputs":[{"name":"parsed_text","types":["Message"]}],
+ "inputs":[{"name":"input_data","input_types":["DataFrame","Table","Data","JSON"],
+            "type":"other","required":true},
+           {"name":"pattern","input_types":["Message"],"type":"str","required":true}],
+ "fields":[{"name":"mode","type":"tab","options":["Parser","Stringify"],"default":"Parser"}],
+ "advanced_fields":["sep"]}
+
+--- CustomComponent ---
+{"type":"CustomComponent","category":"custom_component","display_name":"Custom Component",
+ "description":"Use as a template to create your own component.",
+ "outputs":[{"name":"output","types":["JSON"]},
+            {"name":"component_as_tool","types":["Tool"],
+             "description":"Wraps this component as a Tool (tool inputs: input_value). Connect to an Agent's 'tools' input."}],
+ "inputs":[{"name":"input_value","input_types":["Message"],"type":"str","required":false}]}
+
+--- PythonREPLComponent ---
+{"type":"PythonREPLComponent","category":"utilities","display_name":"Python Interpreter",
+ "description":"Run Python code with optional imports. Use print() to see the output.",
+ "outputs":[{"name":"results","types":["JSON"]},
+            {"name":"component_as_tool","types":["Tool"],
+             "description":"Wraps this component as a Tool (tool inputs: python_code). Connect to an Agent's 'tools' input."}],
+ "inputs":[{"name":"python_code","input_types":["Message"],"type":"str","required":true}],
+ "fields":[{"name":"global_imports","type":"str","required":true,"default":"math"}]}
+
+--- Operations ---
+{"type":"Operations","category":"processing","display_name":"Data Operations",
+ "description":"Perform operations on Text, JSON, and Tables from a single component.",
+ "outputs":[{"name":"message_output","types":["Message"]}],
+ "inputs":[data(Data,JSON), df(DataFrame,Table), filter_value, left_dataframe,
+   mapped_json_display, new_column_value, query, remove_keys_input, replace_value,
+   replacement_value, right_dataframe, select_keys_input, text_input, text_input_2],
+ "fields":[{"name":"input_type","type":"tab","options":["Text","JSON","Table"],"default":"Text"},
+   {"name":"operation","type":"sortableList","options":["Word Count","Case Conversion",
+     "Text Replace","Text Extract","Text Head","Text Tail","Text Strip","Text Join",
+     "Text Clean","Text to DataFrame"],"default":""}]}
+
+--- ConditionalRouter ---
+{"type":"ConditionalRouter","category":"flow_controls","display_name":"If-Else",
+ "description":"Routes an input message to a corresponding output based on text comparison.",
+ "outputs":[{"name":"true_result","types":["Message"]},
+            {"name":"false_result","types":["Message"]}],
+ "inputs":[{"name":"input_text","input_types":["Message"],"type":"str","required":true},
+           {"name":"match_text","input_types":["Message"],"type":"str","required":true}],
+ "fields":[{"name":"operator","type":"str","default":"equals",
+   "options":["equals","not equals","contains","starts with","ends with","regex",
+              "less than","less than or equal","greater than","greater than or equal"]}],
+ "advanced_fields":["case_sensitive","default_route","false_case_message",
+                    "max_iterations","true_case_message"],
+ "constrained_advanced_fields":[{"name":"default_route","type":"str",
+   "options":["true_result","false_result"],"default":"false_result"}]}
+
+--- HumanInput ---
+{"type":"HumanInput","category":"flow_controls","display_name":"Human Input",
+ "description":"Pause the flow for a human-in-the-loop (HITL) decision and route on the chosen action.",
+ "outputs":[{"name":"branch_approve","types":["Message"]},
+            {"name":"branch_reject","types":["Message"]}],
+ "inputs":[{"name":"prompt","input_types":["Message"],"type":"str","required":false}],
+ "fields":[{"name":"decisions","type":"actionPicker","required":true,"combobox":true,
+            "list":true,"default":["Approve","Reject"]}],
+ "advanced_fields":["enable_fallback"]}
+
+--- MCPTools ---
+{"type":"MCPTools","category":"models_and_agents","display_name":"MCP Tools",
+ "description":"Connect to an MCP server to use its tools.",
+ "outputs":[{"name":"response","types":["Table"]},
+            {"name":"component_as_tool","types":["Tool"],
+             "description":"Wraps this component as a Tool (tool inputs: tool_placeholder). Connect to an Agent's 'tools' input."}],
+ "inputs":[{"name":"tool_placeholder","input_types":["Message"],"type":"str","required":false}],
+ "fields":[{"name":"mcp_server","type":"mcp","default":{}}],
+ "advanced_fields":["headers","tool_execution_timeout","use_cache","verify_ssl"],
+ "constrained_advanced_fields":[{"name":"tool_execution_timeout","type":"float",
+   "default":0.0,"range_spec":{"min":0.0,"max":3600.0,"step":0.01,"step_type":"float"}}]}
+
+================================================================================
+[4] Langflow tool doc strings captured (verbatim, from xd:// reads)
+================================================================================
+--- create_flow_from_spec ---
+Format:
+    name: My Chatbot
+    description: A simple chatbot
+
+    nodes:
+      A: ChatInput
+      B: [OI]Model
+      C: ChatOutput
+
+    edges:
+      A.message -> B.input_value
+      B.text_output -> C.input_value
+
+    config:
+      B.model_name: gpt-4o
+      B.temperature: 0.5
+
+Use describe_component_type to find output/input names for edges.
+Connecting via component_as_tool auto-enables tool mode.
+Multi-line config values use YAML-style "|" continuation.
+
+Args: {spec: string; validate?: boolean}  ("Build the flow's graph to validate
+components and connections (default: True)")
+
+--- validate_flow ---
+Streams the build inline (event_delivery=direct) and aggregates per-vertex results
+from end_vertex events. Fast-fails on the first failing component or top-level
+build error -- downstream vertices depend on upstream success and would not
+produce useful additional information.
+Args: {flow_id: string}
+
+--- run_flow ---
+Streams progress events (tokens, messages) when the client supports it.
+Args: {flow_id: string; input_value?: string; input_type?="chat";
+       output_type?="chat"; tweaks?: {component_id: {param: value}}}
+NOTE: no explicit session_id arg in schema.
+
+--- notify_done ---
+Signal that you are done modifying a flow. Call this after completing a series of
+modifications so the UI updates immediately. If you don't call this, the UI will
+still update after a short timeout.
+Args: {flow_id: string; summary?: string | null}
+
+--- export_flow ---
+Export a flow as a complete JSON object for backup or sharing.
+Returns the full flow data with sensitive fields (API keys, passwords) redacted.
+Args: {flow_id: string}
+
+--- configure_component ---
+Set parameter values on a component. Use get_component_info to check current
+values, or describe_component_type to see available fields. Some fields trigger
+server-side template updates (e.g. changing model_name may update available
+options) -- the response reflects the final state, no need to re-fetch.
+Args: {flow_id: string; component_id: string; params: {param: value}}
+
+--- login ---
+Authenticate with a Langflow server. Credentials are stored and reused for all
+subsequent calls. Args: {username, password, server_url? (default LANGFLOW_SERVER_URL
+env or http://localhost:7860)} — NOT called: existing credentials were already valid.
+
+================================================================================
+[5] Context7 (/websites/langflow) — captured doc excerpts
+================================================================================
+- configuration-global-variables: "Global variables allow users to store and reuse
+  credentials and generic values across all flows... Langflow stores these variables
+  in an internal database and encrypts them using a secret key."
+  "Users can configure global variables to apply automatically to specific fields by
+  using the Apply To Fields menu. Once saved, these variables can be accessed in any
+  text input field that displays the Globe icon."
+  "Both types are encrypted, but Credential variables are masked in the visual editor
+  ... Note: Session ID fields do not support Credential type variables."
+- components-prompts: "{variable_name} curly braces ... variables appear as input
+  fields on the component, allowing you to populate them via other flow components,
+  global variables, or fixed values. Escape literal braces with double curly braces."
+- workflow-api: POST /api/v2/workflows, mode "sync", "globals" object injects
+  run-scoped variables. (Also X-LANGFLOW-GLOBAL-VAR-* headers per simplified run API.)
+- bundles-google: Google Generative AI component — "Google API Key (SecretString) -
+  Required"; Model names include "gemini-2.5-flash", "gemini-3-pro-preview".
+- mcp-server: project MCP endpoint /api/v1/mcp/project/<PROJECT_ID>/streamable;
+  "Users can selectively manage which flows are exposed as MCP tools through the
+  MCP Server tab in the Projects page or the Share menu within a flow. The interface
+  allows for toggling specific flows on or off."
+- MCP-over-MCP (MCPTools in-flow): fields.mcp_server type "mcp" default {} — the
+  in-flow way to consume an external MCP server.
+
+================================================================================
+[6] Errors
+================================================================================
+None from Langflow/Context7 MCP during discovery. One harness stream interruption
+("Service temporarily unavailable", upstream glm-5.3) occurred while writing the main
+report; retried once, succeeded. No same-tool error occurred twice; no retry stop hit.
+
+HARD STOP: discovery only; no flows created/edited/run; awaiting parent go-ahead for F1.
