@@ -1,0 +1,232 @@
+================================================================================
+SynCare — Langflow MCP Discovery Report (workstream F1, DISCOVERY ONLY)
+Agent: langflow-builder | Date: 2026-10-02 | CWD: /home/frxskie/Documents/trackover
+No flows created/edited/run. No secrets, tokens, or env contents in this file.
+================================================================================
+
+1. CONNECTIVITY
+---------------
+- Langflow MCP server CONNECTED and live. First Langflow call executed:
+  mcp__langflow_list_flows ({} no-args) -> success, 35 flows returned.
+- No login was required (credentials reused by server; LANGFLOW_API_KEY env path
+  per docs — no secrets read or written by this agent).
+- Context7 MCP also connected (langflow docs: /websites/langflow, 3316 snippets).
+
+2. CONNECTED LANGFLOW TOOLS (exact tool names + schemas)
+--------------------------------------------------------
+- mcp__langflow_login(username, password, server_url?)
+- mcp__langflow_list_flows(query?) -> [{id, name, description, graph, spec_summary, node_count, edge_count}]
+- mcp__langflow_search_component_types(query?, category?, output_type?) -> [{type, category, display_name, description}]
+- mcp__langflow_describe_component_type(component_type) -> {type, category, display_name, description, outputs[], inputs[], fields[], advanced_fields[], constrained_advanced_fields[]}
+- mcp__langflow_create_flow_from_spec(spec, validate?=True)
+  spec text format:
+    name: <flow name>
+    description: <text>
+    nodes:
+      A: ChatInput
+      B: ext:google:GoogleGenerativeAIComponent@official
+    edges:
+      A.message -> B.input_value
+    config:
+      B.model_name: gemini-2.5-flash        (single-line values)
+      B.some_field: |                        (YAML-style "|" multi-line continuation)
+  validate=true builds the graph to validate components/connections.
+  "Connecting via component_as_tool auto-enables tool mode."
+- mcp__langflow_configure_component(flow_id, component_id, params{param:value})
+  Note from docs: some fields trigger server-side template updates (e.g. model_name);
+  response reflects final state.
+- mcp__langflow_get_component_info(flow_id, component_id)
+- mcp__langflow_validate_flow(flow_id) -> streams build inline (event_delivery=direct),
+  aggregates per-vertex results from end_vertex events, fast-fails on first failing component.
+- mcp__langflow_run_flow(flow_id, input_value?, input_type?="chat", output_type?="chat",
+  tweaks?={component_id:{param:value}}) -> streams progress events (tokens, messages).
+- mcp__langflow_notify_done(flow_id, summary?) -> "Signal that you are done modifying a
+  flow. Call after completing a series of modifications so the UI updates immediately."
+- mcp__langflow_export_flow(flow_id) -> full flow JSON, sensitive fields (API keys,
+  passwords) REDACTED. Safe for audit capture.
+- mcp__langflow_list_starter_projects / use_starter_project / create_flow /
+  duplicate_flow / delete_flow / rename_flow / add_component / connect_components /
+  disconnect_components / remove_component / freeze_component / unfreeze_component /
+  get_build_results / get_component_output / batch / layout_flow / run_assistant
+  (schemas not individually read; only referenced from tool inventory).
+
+3. COMPONENT TYPES — EXACT NAMES (search_component_types + describe outputs)
+----------------------------------------------------------------------------
+- ChatInput            (input_output)  outputs: message[Message]; fields: input_value:str="";
+                                       advanced: context_id, files, sender, sender_name,
+                                       session_id, should_store_message; sender default "User".
+                                       ** session_id is an advanced field on ChatInput and ChatOutput. **
+- ChatOutput           (input_output)  inputs: input_value (required; Data|JSON|DataFrame|Table|Message);
+                                       outputs: message[Message]; sender default "Machine".
+- ext:google:GoogleGenerativeAIComponent@official  (category: google; display "Google Generative AI")
+    outputs: text_output[Message], model_output[LanguageModel]
+    inputs : input_value[Message], system_message[Message]  (both optional, type str)
+    fields : api_key:str REQUIRED (SecretString per Context7 docs — credential-type field)
+             max_output_tokens:int default 0
+             model_name:str combobox; OPTIONS INCLUDE "gemini-2.5-flash" (also default),
+               gemini-2.5-pro, gemini-2.5-flash-lite, gemini-2.0-flash, gemini-1.5-*,
+               plus preview/3.x entries (full list captured in transcript)
+             temperature: slider 0.0–1.0 step 0.01, default 0.1
+             tool_model_enabled: bool default false
+    advanced: n, stream, top_k, top_p
+- ParserComponent      (processing, "Parser")  "Extracts text using a template."
+    inputs: input_data (required; DataFrame|Table|Data|JSON), pattern (required, Message/str)
+    fields: mode: tab [Parser|Stringify] default "Parser"; advanced: sep
+    outputs: parsed_text[Message]
+- CustomComponent      (custom_component, "Custom Component")
+    "Use as a template to create your own component."
+    outputs: output[JSON], component_as_tool[Tool] (tool inputs: input_value)
+    inputs : input_value[Message, optional str]
+- PythonREPLComponent  (utilities, "Python Interpreter") — LLM-free code execution
+    inputs: python_code (required, Message/str); fields: global_imports:str required default "math"
+    outputs: results[JSON], component_as_tool[Tool] (tool inputs: python_code)
+- Operations           (processing, "Data Operations") Text/JSON/Table ops (word count, replace,
+    extract, join, text->dataframe, etc.) — NOT a JSON field extractor per se.
+- TypeConverterComponent (processing, "Type Convert") Message<->JSON<->Table conversions.
+- StructuredOutput     (llm_operations) "Uses an LLM to generate structured data. Ideal for
+    extraction and consistency." — needs an LLM input (see note 7).
+- ConditionalRouter    (flow_controls, "If-Else") — BRANCHING primitive
+    inputs: input_text (required), match_text (required)
+    fields: operator options: equals, not equals, contains, starts with, ends with,
+            regex, less than, less than or equal, greater than, greater than or equal (default equals)
+    outputs: true_result[Message], false_result[Message]
+    advanced: case_sensitive, default_route (true_result|false_result, default false_result),
+              false_case_message, true_case_message, max_iterations
+- HumanInput           (flow_controls, "Human Input") — 1.11+ HITL, PRESENT on this instance
+    description: "Pause the flow for a human-in-the-loop (HITL) decision and route on the chosen action."
+    inputs: prompt[Message, optional]; fields: decisions: actionPicker required, combobox,
+            list, default ["Approve","Reject"]
+    outputs: branch_approve[Message], branch_reject[Message]
+    advanced: enable_fallback
+- Also in flow_controls: Listen, Notify, LoopComponent, RunFlow ("Executes another flow
+  from within the same project. Can also be used as a tool for agents.").
+- MCPTools             (models_and_agents, "MCP Tools") — connect a flow to an MCP server
+    fields: mcp_server (type "mcp", default {}); advanced: headers, tool_execution_timeout
+    (0–3600s), use_cache, verify_ssl
+    outputs: response[Table], component_as_tool[Tool]
+- IBM components present: ext:ibm:DB2VectorStoreComponent@official,
+  ext:ibm:WatsonxAIComponent@official, ext:ibm:WatsonxDataMCPComponent@official,
+  ext:ibm:WatsonxDataPrestoComponent@official, ext:ibm:WatsonxEmbeddingsComponent@official.
+  NO generic "IBM Bob" MCP component found (see section 6).
+
+Search terms returning EMPTY results (verified, not guessed): "gemini" (component is
+registered under google vendor name, not "gemini"), "branch" (use ConditionalRouter),
+"human input" as exact component_type string is "HumanInput".
+
+4. GLOBAL VARIABLE / API KEY BINDING (GEMINI_API_KEY — MUST NOT BE WRITTEN LITERALLY)
+------------------------------------------------------------------------------------
+- Context7 (/websites/langflow): Global variables are stored encrypted in the Langflow DB;
+  two types: Generic (visible) and Credential (masked in editor). "Users can configure
+  global variables to apply automatically to specific fields by using the Apply To Fields
+  menu. Once saved, these variables can be accessed in any text input field that displays
+  the Globe icon." (configuration-global-variables)
+- Prompt fields support {variable} curly-brace references; saved variables appear as input
+  fields; values can come from global variables. (components-prompts)
+- Workflow API v2 supports run-scoped "globals" injection (mode: sync) — relevant only if
+  parent runs via HTTP API instead of MCP run_flow.
+- CONFIG RISK for build phase: create_flow_from_spec "config:" lines set literal field
+  values. The Gemini component's api_key is a Credential/SecretString field bound via the
+  Globe icon (Apply To Fields). MCP configure_component sets literal param values — writing
+  "GEMINI_API_KEY" as a string value there would be a LITERAL, not a global reference.
+  Therefore: DO NOT set B.api_key in spec config or configure_component. Rely on the
+  server-side "Apply To Fields" auto-binding of the existing GEMINI_API_KEY global
+  (parent/user-side UI setting), or the credential's field-level default binding. This
+  must be confirmed at build time on validation on register_discharge_summary (no scratch flow); export_flow redacts
+  credential values so it is safe to inspect the bound field name afterwards.
+- No tool exists to LIST or CREATE global variables over MCP — discovery confirms this is
+  a UI/server-side configuration surface only.
+
+5. RUNTIME / SESSION / OUTPUT REQUIREMENTS MAPPING
+--------------------------------------------------
+- session_id: run_flow accepts input_type/output_type/tweaks but NO explicit session_id
+  parameter in the MCP schema. session_id is a ChatInput/ChatOutput advanced field.
+  MCP-docs note: "Session ID fields do not support Credential type variables."
+  For "demo-<synthetic patient_id>" sessions: pass via run_flow tweaks on the ChatInput
+  component's session_id field (e.g. {"<ChatInput id>": {"session_id": "demo-P001"}}),
+  or via Playground/API session handling. To be exercised at build phase (F1/F2), not now.
+- Inline episode/message input: ChatInput.message -> Gemini input_value works directly;
+  ParserComponent pattern templating available for JSON field extraction if needed.
+
+6. IBM BOB MCP TOOL ACTIVATION — FINDINGS (named uncertainty, not blocked)
+--------------------------------------------------------------------------
+- The connected Langflow instance exposes flows as MCP tools per project via an MCP
+  Server endpoint: /api/v1/mcp/project/<PROJECT_ID>/streamable (Context7, mcp-server docs).
+  Toggle per-flow exposure: "Users can selectively manage which flows are exposed as MCP
+  tools through the MCP Server tab in the Projects page or the Share menu within a flow."
+- "IBM Bob" is NOT a component name present in this instance's component registry (searched
+  "ibm", "mcp" — only watsonx/Db2/Composio/MCPTools types exist). [INFERENCE] "Bob" is most
+  plausibly an external MCP client (e.g. an IBM-side assistant) that consumes Langflow's
+  project MCP endpoint; "activation" therefore means: ensure the flow lives in the project
+  whose MCP Server is enabled and the specific flow is toggled ON for MCP exposure.
+  UNCERTAINTY: exact Bob-side registration/activation mechanism is not observable from
+  this instance's MCP tools; no Langflow MCP tool exposes project/MCP-server toggle state.
+  REMEDY: parent/user confirms in Langflow UI (Projects page -> MCP Server tab) after F1/F2
+  build; no flow-content work depends on it.
+- MCPTools component (fields.mcp_server, type "mcp", default {}) is the in-flow way to
+  CONSUME an external MCP server (e.g. if Bob exposes tools INTO Langflow instead).
+
+7. EXISTING FLOW INVENTORY vs SynCare TARGET NAMES (no duplicates created)
+--------------------------------------------------------------------------
+35 flows exist. NONE of them carry SynCare discharge-summary or patient-checkin triage
+names; no flow named anything like "register_discharge_summary" / "record_patient_checkin"
+exists today. Existing flows are Langflow templates + user project flows, including:
+  IBM-related: "Onboarding Buddy System (Starter Project)" (id a6d2fbaa-...,
+  "Sample Project IBM IT"), "Self-Care Buddy" (c4847d94-...).
+  Others: Basic Prompting, Blog Writer, Content Aggregator, Custom Component Generator,
+  Deep Research Agent, Document Q&A, Financial Report Parser, Hybrid Search RAG,
+  Image Sentiment Analysis, Instagram Copywriter, Knowledge Retrieval, Market Research,
+  Meeting Summary, Memory Chatbot, Multi Agent Flow, Portfolio Website Code Generator,
+  Price Deal Finder, Research Translation Loop, SEO Keyword Generator, SaaS Pricing,
+  Sequential Tasks Agents, Simple Agent, Social Media Agent, Text Sentiment Analysis,
+  Travel Planning Agents, Twitter Thread Generator, Vector Store RAG, Structured Data
+  Analysis Agent, YouTube Analysis, New Flow (empty canvas), Quick Tutor - Complete,
+  Save Study Notes - Complete (+Backup), Study Planner - Complete,
+  Meeting Action Assistant - Complete.
+- POLICY ACKNOWLEDGED: "no extra flows" = at most the five SynCare flows; unrelated
+  existing flows (incl. IBM starter/self-care) are NOT to be deleted or renamed.
+- If a SynCare-named flow is found to already exist at build time, inspect via
+  list_flows/get_component_info BEFORE any edit and update in place rather than creating
+  a duplicate. Current observation: no name collision.
+
+8. BUILD-PHASE DESIGN IMPLICATIONS FOR F1 (register_discharge_summary) & F2 (record_patient_checkin)
+----------------------------------------------------------------------------------------------------
+- LLM: ext:google:GoogleGenerativeAIComponent@official, model_name "gemini-2.5-flash",
+  temperature 0 (slider min 0.0 is valid; default is 0.1 — must be explicitly set to 0).
+  api_key left unbound in spec; relies on existing GEMINI_API_KEY global (section 4).
+- Scorer: deterministic Python. Required genuine CustomComponent (custom Python code,
+  output[JSON]), not PythonREPL substitution. Source code to be configured at build time
+  (get_component_info/configure to set code field); no improvisation before parent go-ahead.
+- Branching: ConditionalRouter (If-Else) with operator options incl. "contains"/"regex"
+  fits red-flag routing (F2) and threshold routing (F1).
+- HumanInput (1.11+ HITL) present with branch_approve/branch_reject outputs — available
+  if parent's five-flow design requires approval gates.
+- Scoring rule (from requirements, verbatim): LOS>=5 +2; emergency +1; comorbidities>=3 +2;
+  admissions>=2 +2. LOW 0–1 / MEDIUM 2–3 / HIGH >=4. Output marker: demo-heuristic-v1.
+- F2 red flags ONLY: chest pain; severe shortness of breath; fainting/unconsciousness;
+  heavy bleeding; suicidal statements. If red flag -> skip scorer, route directly.
+- Extraction: temp 0 gemini-2.5-flash returning structured JSON for the scorer; Parser
+  (Stringify/Parser modes) or TypeConverter may bridge Message<->JSON.
+
+9. ERRORS / ANOMALIES ENCOUNTERED
+---------------------------------
+- Zero tool errors on any Langflow or Context7 call during discovery.
+- One harness-level interruption occurred while writing this report (provider stream
+  error "Service temporarily unavailable", upstream glm-5.3); retried successfully —
+  not a Langflow MCP failure, no retry-limit trip.
+- List-flows output for one starter flow shows a component rendered as "?" and one edge
+  as "LanguageModelComponent-ps5yd.text_output -> LoopComponent-E7Ur0.?" in unrelated
+  template flows (Research Translation Loop / Basic Prompting) — display artifact of the
+  list endpoint on those templates, not investigated further (out of scope).
+
+10. RAW TRANSCRIPT AVAILABILITY
+-------------------------------
+- Full raw tool outputs (list_flows artifact, all describe/search outputs, Context7 docs)
+  were produced live in-session by this agent. This report file is the deliverable;
+  parents can re-invoke the same zero-arg / single-field MCP calls to reproduce any
+  output verbatim (all calls above are side-effect-free reads).
+- Secret-free audit trail: this file contains names, ids, and config field references
+  only — no tokens, no env values, no credential contents.
+
+DISCOVERY COMPLETE — HARD STOP reached. No flow was created, edited, run, or deleted.
+Awaiting parent go-ahead before F1 build.
+================================================================================
