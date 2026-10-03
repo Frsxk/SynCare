@@ -3303,3 +3303,387 @@ were deleted. No scaffolds/package manifests added. The raw export, this actual
 transcript, and README are the only files included in the authorized atomic
 blocked-repair commit. No push.
 ================================================================================
+
+================================================================================
+OPERATOR-AUTHORIZED MODEL SWITCH / F1 ACCEPTANCE — 2026-10-03
+FINAL STATUS: PASSED (supersedes the BLOCKED status above).
+Operator decision (verbatim): "Let's try gemini-3.5-flash-lite. This model is relatively new and has a large window for free usage."
+Authorization changed F1/F2 model only, retaining temperature 0 and all other requirements.
+
+DISCOVERY / MUTATIONS / VALIDATION / MCP RUN — actual captured calls
+------------------------------------------------------------------
+The model is absent from describe_component_type's static options, but model_name
+combobox=true accepts custom values. configure_component and get_component_info
+confirmed gemini-3.5-flash-lite exactly, with temperature still 0. api_key was
+not configured, and existing reference metadata remains unchanged.
+CALL mcp__langflow_list_flows
+ARGS (exact submitted JSON):
+{"query": "register"}
+RESULT (VERBATIM tool text):
+{
+  "id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+  "name": "register_discharge_summary",
+  "description": "SynCare synthetic-only discharge extraction and deterministic demo-heuristic-v1 risk tier; not clinically validated. Human clinical oversight required.",
+  "graph": "ChatInput -> ext:google:GoogleGenerativeAIComponent@official, ext:google:GoogleGenerativeAIComponent@official -> CustomComponent, CustomComponent -> ChatOutput",
+  "spec_summary": "name: register_discharge_summary\n\ncomponents:\n  ChatInput-wQRXg: ChatInput\n  ext:google:GoogleGenerativeAIComponent@official-RD1Gk: ext:google:GoogleGenerativeAIComponent@official\n  CustomComponent-S7MvA: CustomComponent\n  ChatOutput-dkoVg: ChatOutput\n\nconnections:\n  ChatInput-wQRXg.message -> ext:google:GoogleGenerativeAIComponent@official-RD1Gk.input_value\n  ext:google:GoogleGenerativeAIComponent@official-RD1Gk.text_output -> CustomComponent-S7MvA.input_value\n  CustomComponent-S7MvA.output -> ChatOutput-dkoVg.input_value",
+  "node_count": 4,
+  "edge_count": 3
+}```json
+{
+  "result": [
+    {
+      "id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+      "name": "register_discharge_summary",
+      "description": "SynCare synthetic-only discharge extraction and deterministic demo-heuristic-v1 risk tier; not clinically validated. Human clinical oversight required.",
+      "graph": "ChatInput -> ext:google:GoogleGenerativeAIComponent@official, ext:google:GoogleGenerativeAIComponent@official -> CustomComponent, CustomComponent -> ChatOutput",
+      "spec_summary": "name: register_discharge_summary\n\ncomponents:\n  ChatInput-wQRXg: ChatInput\n  ext:google:GoogleGenerativeAIComponent@official-RD1Gk: ext:google:GoogleGenerativeAIComponent@official\n  CustomComponent-S7MvA: CustomComponent\n  ChatOutput-dkoVg: ChatOutput\n\nconnections:\n  ChatInput-wQRXg.message -> ext:google:GoogleGenerativeAIComponent@official-RD1Gk.input_value\n  ext:google:GoogleGenerativeAIComponent@official-RD1Gk.text_output -> CustomComponent-S7MvA.input_value\n  CustomComponent-S7MvA.output -> ChatOutput-dkoVg.input_value",
+      "node_count": 4,
+      "edge_count": 3
+    }
+  ]
+}
+```
+
+CALL mcp__langflow_describe_component_type
+ARGS (exact submitted JSON):
+{"component_type": "ext:google:GoogleGenerativeAIComponent@official"}
+RESULT (VERBATIM tool text):
+{
+  "type": "ext:google:GoogleGenerativeAIComponent@official",
+  "category": "google",
+  "display_name": "Google Generative AI",
+  "description": "Generate text using Google Generative AI.",
+  "outputs": [
+    {
+      "name": "text_output",
+      "types": [
+        "Message"
+      ]
+    },
+    {
+      "name": "model_output",
+      "types": [
+        "LanguageModel"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "name": "input_value",
+      "input_types": [
+        "Message"
+      ],
+      "type": "str",
+      "required": false
+    },
+    {
+      "name": "system_message",
+      "input_types": [
+        "Message"
+      ],
+      "type": "str",
+      "required": false
+    }
+  ],
+  "fields": [
+    {
+      "name": "api_key",
+      "type": "str",
+      "required": true
+    },
+    {
+      "name": "max_output_tokens",
+      "type": "int",
+      "default": 0
+    },
+    {
+      "name": "model_name",
+      "type": "str",
+      "options": [
+        "gemini-2.5-flash",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash-preview-09-2025",
+        "gemini-2.5-flash-lite-preview-09-2025",
+        "gemini-2.5-flash-image",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-8b",
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-2.0-flash-preview-image-generation",
+        "gemini-3.1-pro-preview",
+        "gemini-3-flash-preview",
+        "gemini-3.1-flash-lite-preview",
+        "gemini-3-pro-image-preview",
+        "gemini-3.1-flash-image-preview"
+      ],
+      "combobox": true,
+      "default": "gemini-2.5-flash"
+    },
+    {
+      "name": "temperature",
+      "type": "slider",
+      "default": 0.1,
+      "range_spec": {
+        "min": 0.0,
+        "max": 1.0,
+        "step": 0.01,
+        "step_type": "float"
+      }
+    },
+    {
+      "name": "tool_model_enabled",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "advanced_fields": [
+    "n",
+    "stream",
+    "top_k",
+    "top_p"
+  ]
+}
+
+CALL mcp__langflow_configure_component
+ARGS (exact submitted JSON):
+{"flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a", "component_id": "ext:google:GoogleGenerativeAIComponent@official-RD1Gk", "params": {"model_name": "gemini-3.5-flash-lite", "temperature": 0}}
+RESULT (VERBATIM tool text):
+{
+  "component_id": "ext:google:GoogleGenerativeAIComponent@official-RD1Gk",
+  "configured": [
+    "model_name",
+    "temperature"
+  ]
+}
+
+CALL mcp__langflow_get_component_info
+ARGS (exact submitted JSON):
+{"flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a", "component_id": "ext:google:GoogleGenerativeAIComponent@official-RD1Gk", "field_name": "model_name"}
+RESULT (VERBATIM tool text):
+{
+  "component_id": "ext:google:GoogleGenerativeAIComponent@official-RD1Gk",
+  "field_name": "model_name",
+  "value": "gemini-3.5-flash-lite",
+  "type": "str",
+  "display_name": "Model",
+  "required": false,
+  "real_time_refresh": false
+}
+
+CALL mcp__langflow_get_component_info
+ARGS (exact submitted JSON):
+{"flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a", "component_id": "ext:google:GoogleGenerativeAIComponent@official-RD1Gk", "field_name": "temperature"}
+RESULT (VERBATIM tool text):
+{
+  "component_id": "ext:google:GoogleGenerativeAIComponent@official-RD1Gk",
+  "field_name": "temperature",
+  "value": 0,
+  "type": "slider",
+  "display_name": "Temperature",
+  "required": false,
+  "real_time_refresh": false
+}
+
+CALL mcp__langflow_validate_flow
+ARGS (exact submitted JSON):
+{"flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a"}
+RESULT (VERBATIM tool text):
+{
+  "valid": true,
+  "component_count": 4,
+  "errors": []
+}
+
+CALL mcp__langflow_run_flow
+ARGS (exact submitted JSON):
+{"flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a", "input_value": "Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan.\n", "input_type": "chat", "output_type": "chat", "tweaks": {"ChatInput-wQRXg": {"session_id": "demo-chf-high"}, "ChatOutput-dkoVg": {"session_id": "demo-chf-high"}}}
+RESULT (VERBATIM tool text):
+{
+  "session_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+  "outputs": [
+    {
+      "inputs": {
+        "input_value": "Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan.\n"
+      },
+      "outputs": [
+        {
+          "results": {
+            "message": {
+              "text_key": "text",
+              "data": {
+                "text": "{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}",
+                "files": [],
+                "sender": "Machine",
+                "sender_name": "AI",
+                "session_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+                "context_id": "",
+                "run_id": null,
+                "timestamp": "2026-10-03 13:06:10.511236 UTC",
+                "flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+                "error": false,
+                "edit": false,
+                "properties": {
+                  "text_color": null,
+                  "background_color": null,
+                  "edited": false,
+                  "source": {
+                    "id": "CustomComponent-S7MvA",
+                    "display_name": "SynCare Demo Discharge Risk Scorer",
+                    "source": "SynCare Demo Discharge Risk Scorer"
+                  },
+                  "icon": null,
+                  "allow_markdown": false,
+                  "positive_feedback": null,
+                  "state": "complete",
+                  "targets": [],
+                  "usage": {
+                    "input_tokens": 417,
+                    "output_tokens": 129,
+                    "total_tokens": 546
+                  },
+                  "build_duration": null
+                },
+                "category": "message",
+                "content_blocks": [],
+                "duration": null,
+                "session_metadata": null
+              },
+              "default_value": "",
+              "sender": "Machine",
+              "sender_name": "AI",
+              "files": [],
+              "session_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+              "context_id": "",
+              "run_id": null,
+              "timestamp": "2026-10-03 13:06:10.511236 UTC",
+              "flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+              "error": false,
+              "edit": false,
+              "properties": {
+                "text_color": null,
+                "background_color": null,
+                "edited": false,
+                "source": {
+                  "id": "CustomComponent-S7MvA",
+                  "display_name": "SynCare Demo Discharge Risk Scorer",
+                  "source": "SynCare Demo Discharge Risk Scorer"
+                },
+                "icon": null,
+                "allow_markdown": false,
+                "positive_feedback": null,
+                "state": "complete",
+                "targets": [],
+                "usage": {
+                  "input_tokens": 417,
+                  "output_tokens": 129,
+                  "total_tokens": 546
+                },
+                "build_duration": null
+              },
+              "category": "message",
+              "content_blocks": [],
+              "duration": null,
+              "session_metadata": null,
+              "text": "{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"
+            }
+          },
+          "artifacts": {
+            "message": "{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}",
+            "sender": "Machine",
+            "sender_name": "AI",
+            "files": [],
+            "type": "object"
+          },
+          "outputs": {
+            "message": {
+              "message": "{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}",
+              "type": "text"
+            }
+          },
+          "logs": {
+            "message": []
+          },
+          "messages": [
+            {
+              "message": "{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}",
+              "sender": "Machine",
+              "sender_name": "AI",
+              "session_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a",
+              "stream_url": null,
+              "component_id": "ChatOutput-dkoVg",
+              "files": [],
+              "type": "text"
+            }
+          ],
+          "timedelta": null,
+          "duration": null,
+          "component_display_name": "Chat Output",
+          "component_id": "ChatOutput-dkoVg",
+          "used_frozen_result": false,
+          "token_usage": null
+        }
+      ]
+    }
+  ]
+}
+
+CALL mcp__langflow_notify_done
+ARGS (exact submitted JSON):
+{"flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a", "summary": "F1 PASSED on operator-authorized gemini-3.5-flash-lite at temperature 0: exact fixture yields valid JSON 7/HIGH, all four factors and complete episode. Credential NAME reference unchanged. MCP session tweaks ineffective; approved REST run with top-level demo-chf-high confirms message and trace isolation."}
+RESULT (VERBATIM tool text):
+{
+  "status": "ok",
+  "flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a"
+}
+
+CALL mcp__langflow_export_flow
+ARGS (exact submitted JSON):
+{"flow_id": "458d7c88-812b-4cb2-bc3f-ccccf809ed1a"}
+RESULT: exact raw tool text persisted to exports/register_discharge_summary.json; not reconstructed.
+
+SESSION TWEAK FAILURE (observed, not an inference)
+-------------------------------------------------
+The MCP run above returned correct JSON and 7/HIGH but its top-level session_id,
+message.session_id, and trace.sessionId were the flow UUID despite both explicit
+component tweaks. Installed simple_run_flow source derives effective session from
+SimplifiedAPIRequest.session_id (absent in MCP's request schema), defaults to the
+flow UUID, and forwards that session to graph execution. This transport limitation
+was reported to automated tool QA. No flow code/settings were changed to mask it.
+Initial MCP-run/validation trace response (VERBATIM HTTP text):
+{"traces":[{"id":"aa90a1a6-a251-4e0d-bdcd-50d31f70f837","name":"register_discharge_summary - 458d7c88-812b-4cb2-bc3f-ccccf809ed1a","status":"ok","startTime":"2026-10-03T13:06:09.325452","totalLatencyMs":1197,"totalTokens":546,"flowId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","sessionId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","input":{"input_value":"Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan.\n"},"output":{"message":{"text_key":"text","data":{"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","files":[],"sender":"Machine","sender_name":"AI","session_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","context_id":"","run_id":null,"timestamp":"2026-10-03 13:06:10.511236 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[],"duration":null,"session_metadata":null},"default_value":"","sender":"Machine","sender_name":"AI","files":[],"session_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","context_id":"","run_id":null,"timestamp":"2026-10-03 13:06:10.511236 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[{"type":"text","id":null,"duration":null,"header":{},"contents":[],"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}],"duration":null,"session_metadata":null,"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}}},{"id":"fb7a1f88-be0b-4a3a-a3a0-ec4e136784fa","name":"register_discharge_summary - 458d7c88-812b-4cb2-bc3f-ccccf809ed1a","status":"ok","startTime":"2026-10-03T13:05:52.922571","totalLatencyMs":1230,"totalTokens":545,"flowId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","sessionId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","input":{"input_value":"Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan."},"output":{"message":{"text_key":"text","data":{"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","files":[],"sender":"Machine","sender_name":"AI","session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:05:54.120081 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":416,"output_tokens":129,"total_tokens":545},"build_duration":null},"category":"message","content_blocks":[],"duration":null,"session_metadata":null},"default_value":"","sender":"Machine","sender_name":"AI","files":[],"session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:05:54.120081 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":416,"output_tokens":129,"total_tokens":545},"build_duration":null},"category":"message","content_blocks":[{"type":"text","id":null,"duration":null,"header":{},"contents":[],"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}],"duration":null,"session_metadata":null,"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}}},{"id":"9441f3c0-6502-41cd-8b2e-71349aeecac7","name":"register_discharge_summary - 458d7c88-812b-4cb2-bc3f-ccccf809ed1a","status":"error","startTime":"2026-10-03T12:18:04.560578","totalLatencyMs":9014,"totalTokens":0,"flowId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","sessionId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","input":{"input_value":"Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan."},"output":{"error":"Error calling model 'gemini-2.5-flash' (NOT_FOUND): 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).', 'status': 'NOT_FOUND'}}"}}],"total":9,"pages":3}
+
+APPROVED SESSION-CORRECTIVE REST RUN
+----------------------------------
+Operator explicitly approved the same REST /api/v1/run route with top-level
+session_id=demo-chf-high plus original ChatInput/ChatOutput tweaks, and the same
+REST route for F2 tests. Headers are REDACTED: x-api-key=[REDACTED]; Content-Type=application/json.
+POST /api/v1/run/458d7c88-812b-4cb2-bc3f-ccccf809ed1a
+Request (exact body JSON):
+{"input_value": "Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan.\n", "input_type": "chat", "output_type": "chat", "session_id": "demo-chf-high", "tweaks": {"ChatInput-wQRXg": {"session_id": "demo-chf-high"}, "ChatOutput-dkoVg": {"session_id": "demo-chf-high"}}}
+Response (VERBATIM HTTP text):
+{"session_id":"demo-chf-high","outputs":[{"inputs":{"input_value":"Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan.\n"},"outputs":[{"results":{"message":{"text_key":"text","data":{"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","files":[],"sender":"Machine","sender_name":"AI","session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:07:22.921018 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[],"duration":null,"session_metadata":null},"default_value":"","sender":"Machine","sender_name":"AI","files":[],"session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:07:22.921018 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[],"duration":null,"session_metadata":null,"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}},"artifacts":{"message":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","sender":"Machine","sender_name":"AI","files":[],"type":"object"},"outputs":{"message":{"message":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","type":"text"}},"logs":{"message":[]},"messages":[{"message":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","sender":"Machine","sender_name":"AI","session_id":"demo-chf-high","stream_url":null,"component_id":"ChatOutput-dkoVg","files":[],"type":"text"}],"timedelta":null,"duration":null,"component_display_name":"Chat Output","component_id":"ChatOutput-dkoVg","used_frozen_result":false,"token_usage":null}]}]}
+
+Final ChatOutput text (VERBATIM excerpt from response):
+{"episode": {"diagnosis": "gagal jantung NYHA III", "medications": ["furosemide 40mg 2x1", "bisoprolol 2.5mg 1x1", "ramipril 5mg 1x1"], "instructions": ["timbang berat badan tiap pagi", "batasi garam", "kontrol minggu depan"], "followup_needs": ["kontrol minggu depan"], "length_of_stay_days": 6, "admission_type": "emergency", "comorbidity_count": 3, "admissions_prior_12m": 2}, "score": 7, "tier": "HIGH", "risk_factors": {"length_of_stay_days": {"value": 6, "threshold": 5, "points": 2, "met": true}, "admission_type": {"value": "emergency", "threshold": "emergency", "points": 1, "met": true}, "comorbidity_count": {"value": 3, "threshold": 3, "points": 2, "met": true}, "admissions_prior_12m": {"value": 2, "threshold": 2, "points": 2, "met": true}}, "rationale": "length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.", "label": "demo-heuristic-v1", "missing_fields": [], "not_clinically_validated": true, "synthetic_demo_only": true, "disclaimer": "Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required."}
+
+Session evidence (VERBATIM subsequent trace HTTP response):
+{"traces":[{"id":"42303d8a-301f-429b-8ba1-52a0d4f0332e","name":"register_discharge_summary - 458d7c88-812b-4cb2-bc3f-ccccf809ed1a","status":"ok","startTime":"2026-10-03T13:07:21.572560","totalLatencyMs":1363,"totalTokens":546,"flowId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","sessionId":"demo-chf-high","input":{"input_value":"Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan.\n"},"output":{"message":{"text_key":"text","data":{"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","files":[],"sender":"Machine","sender_name":"AI","session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:07:22.921018 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[],"duration":null,"session_metadata":null},"default_value":"","sender":"Machine","sender_name":"AI","files":[],"session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:07:22.921018 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[{"type":"text","id":null,"duration":null,"header":{},"contents":[],"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}],"duration":null,"session_metadata":null,"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}}},{"id":"aa90a1a6-a251-4e0d-bdcd-50d31f70f837","name":"register_discharge_summary - 458d7c88-812b-4cb2-bc3f-ccccf809ed1a","status":"ok","startTime":"2026-10-03T13:06:09.325452","totalLatencyMs":1197,"totalTokens":546,"flowId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","sessionId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","input":{"input_value":"Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan.\n"},"output":{"message":{"text_key":"text","data":{"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","files":[],"sender":"Machine","sender_name":"AI","session_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","context_id":"","run_id":null,"timestamp":"2026-10-03 13:06:10.511236 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[],"duration":null,"session_metadata":null},"default_value":"","sender":"Machine","sender_name":"AI","files":[],"session_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","context_id":"","run_id":null,"timestamp":"2026-10-03 13:06:10.511236 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":417,"output_tokens":129,"total_tokens":546},"build_duration":null},"category":"message","content_blocks":[{"type":"text","id":null,"duration":null,"header":{},"contents":[],"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}],"duration":null,"session_metadata":null,"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}}},{"id":"fb7a1f88-be0b-4a3a-a3a0-ec4e136784fa","name":"register_discharge_summary - 458d7c88-812b-4cb2-bc3f-ccccf809ed1a","status":"ok","startTime":"2026-10-03T13:05:52.922571","totalLatencyMs":1230,"totalTokens":545,"flowId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","sessionId":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","input":{"input_value":"Pasien laki-laki 62 tahun, gagal jantung NYHA III, dirawat 6 hari karena decompensatio, masuk via IGD (emergency), riwayat DM tipe 2, hipertensi, CKD stage 3 (3 komorbid), 2x rawat inap 12 bulan terakhir. Obat pulang: furosemide 40mg 2x1, bisoprolol 2.5mg 1x1, ramipril 5mg 1x1. Instruksi: timbang berat badan tiap pagi, batasi garam, kontrol minggu depan."},"output":{"message":{"text_key":"text","data":{"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}","files":[],"sender":"Machine","sender_name":"AI","session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:05:54.120081 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":416,"output_tokens":129,"total_tokens":545},"build_duration":null},"category":"message","content_blocks":[],"duration":null,"session_metadata":null},"default_value":"","sender":"Machine","sender_name":"AI","files":[],"session_id":"demo-chf-high","context_id":"","run_id":null,"timestamp":"2026-10-03 13:05:54.120081 UTC","flow_id":"458d7c88-812b-4cb2-bc3f-ccccf809ed1a","error":false,"edit":false,"properties":{"text_color":null,"background_color":null,"edited":false,"source":{"id":"CustomComponent-S7MvA","display_name":"SynCare Demo Discharge Risk Scorer","source":"SynCare Demo Discharge Risk Scorer"},"icon":null,"allow_markdown":false,"positive_feedback":null,"state":"complete","targets":[],"usage":{"input_tokens":416,"output_tokens":129,"total_tokens":545},"build_duration":null},"category":"message","content_blocks":[{"type":"text","id":null,"duration":null,"header":{},"contents":[],"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}],"duration":null,"session_metadata":null,"text":"{\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}"}}}],"total":10,"pages":4}
+
+Observed acceptance: json.loads of final ChatOutput text succeeded, score=7,
+tier=HIGH, all four factors met/visible, rationale nonempty, demo-heuristic-v1,
+all eight episode fields populated from exact fixture, missing_fields=[].
+REST response/session, ChatOutput message/session, and current trace/session all
+match demo-chf-high. This is an actual Gemini-backed flow run, not local smoke.
+
+BINDING EVIDENCE (flow field only; never global values)
+-----------------------------------------------------
+Read-only GET /api/v1/flows/458d7c88-812b-4cb2-bc3f-ccccf809ed1a
+VERBATIM api_key field excerpt; value is VARIABLE NAME, not a credential:
+"api_key":{"load_from_db":true,"override_skip":false,"required":true,"placeholder":"","show":true,"name":"api_key","value":"GEMINI_API_KEY","display_name":"Google API Key","advanced":false,"api_editable":false,"input_types":[],"dynamic":false,"info":"The Google API Key to use for the Google Generative AI.","real_time_refresh":true,"title_case":false,"track_in_telemetry":false,"password":true,"type":"str","_input_type":"SecretStrInput"}
+The successful current Gemini executions plus this unchanged named reference
+establish binding. No globals were read/edited, no literal credential was written.
+No unrelated flows changed. Raw export and appended transcript scanned for
+credential/token patterns before writing/commit. F3 remains forbidden/unstarted.
+================================================================================
