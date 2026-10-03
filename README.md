@@ -8,7 +8,7 @@
 * **IBM Bob (Conversational Front-End)**: Manages patient and caregiver dialogue, collects daily symptom reports, and provides empathetic interactive communication.
 * **Langflow (Backend Workflow Orchestration)**: Handles structured data extraction, deterministic heuristic risk tiering, care plan drafting, human-in-the-loop clinical review gates, and grounded guideline retrieval.
 
-> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. F1 **PASSED** validation and the exact synthetic fixture run on operator-authorized `gemini-3.5-flash-lite` at temperature 0: valid JSON, score 7, HIGH, complete episode, all four factors. Session isolation was proven through the approved REST run route. F2 is authorized next but remains unstarted at this checkpoint; F3–F5 remain unstarted.
+> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. **F1 and F2 PASSED** their synthetic acceptance cases on operator-authorized `gemini-3.5-flash-lite` at temperature 0. F1 yields valid JSON 7/HIGH with complete episode; F2 yields 6/HIGH monitoring, MEDIUM→HIGH plan review, and exact red-flag escalation with the scorer structurally bypassed. REST message/trace session isolation was proven. **STOP after F2**; F3–F5 remain unstarted.
 
 ### Clinical Disclaimer & Synthetic Data Mandate
 * **SYNTHETIC DEMO ONLY**: All clinical data, patient profiles, and workflow artifacts are synthetic demonstrations.
@@ -24,7 +24,8 @@
 ```text
 .
 ├── exports/
-│   └── register_discharge_summary.json       # Verbatim redacted Langflow export for F1 (4 nodes, 3 edges)
+│   ├── register_discharge_summary.json       # Verbatim redacted F1 export (4 nodes, 3 edges)
+│   └── record_patient_checkin.json           # Verbatim redacted F2 export (7 nodes, 6 edges)
 ├── fixtures/
 │   └── discharge-chf-high.txt                # Synthetic Indonesian CHF discharge summary text (357 bytes)
 ├── protocols/
@@ -33,7 +34,8 @@
 ├── reports/
 │   ├── langflow-discovery.txt                # Langflow MCP environment & component discovery report
 │   ├── langflow-discovery-transcript.txt     # Raw and summarized tool schemas & discovery transcript
-│   └── register_discharge_summary-test.txt   # F1 repair transcript, model-404 evidence, local scorer smoke
+│   ├── register_discharge_summary-test.txt   # F1 history and actual passed fixture/session evidence
+│   └── record_patient_checkin-test.txt       # F2 full actual transcript, three runs, bypass proof
 └── README.md                                 # Full agent handoff documentation
 ```
 
@@ -44,6 +46,8 @@
 * [`reports/langflow-discovery-transcript.txt`](reports/langflow-discovery-transcript.txt): Tool schema extractions and discovery transcript.
 * [`reports/register_discharge_summary-test.txt`](reports/register_discharge_summary-test.txt): Factual F1 repair transcript, verbatim mutation/validation results, provider-404 trace, reference-name evidence, and explicitly local scorer smoke outputs.
 * [`exports/register_discharge_summary.json`](exports/register_discharge_summary.json): Exact raw export of F1 flow graph (nodes, edges, config, and source).
+* [`reports/record_patient_checkin-test.txt`](reports/record_patient_checkin-test.txt): Full actual F2 construction/registration transcript, isolated REST tests, exact outputs, and scorer-bypass evidence.
+* [`exports/record_patient_checkin.json`](exports/record_patient_checkin.json): Exact raw redacted F2 flow export.
 
 ---
 
@@ -52,12 +56,13 @@
 | Flow ID | Flow Name | Purpose & Scope | Implementation Status |
 |---|---|---|---|
 | **F1** | `register_discharge_summary` | Ingests discharge summary text, extracts clinical episode parameters via LLM, and calculates a deterministic DEMO risk tier (LOW / MEDIUM / HIGH). **NOT a calibrated 30-day prediction model**. | **PASSED — fixture 7/HIGH; isolated REST session** |
-| **F2** | `record_patient_checkin` | Ingests daily check-in text, detects 5 red-flag categories (immediate escalation), tracks non-flag symptom trajectory / adherence, calculates next check-in interval, and triggers plan review on tier changes. | **UNSTARTED — authorized after F1 acceptance** |
+| **F2** | `record_patient_checkin` | Ingests daily check-in text, detects 5 red-flag categories (immediate escalation), tracks non-flag symptom trajectory / adherence, calculates next check-in interval, and triggers plan review on tier changes. | **PASSED — all 3 isolated cases; structural bypass proven** |
 | **F3** | `draft_followup_plan` | Generates a JSON draft follow-up care plan in Bahasa Indonesia plus SATUSEHAT-shaped FHIR resources under key `satuseshat` (`careplan`, `servicerequest`, `task`). | **UNSTARTED** |
 | **F4** | `review_care_plan` | Human-in-the-loop review via `HumanInput`, SQLite persistence (`approved_plans`, `audit_log`), and plan routing (`Approve`, `Request Changes`, `Escalate`). | **UNSTARTED** |
 | **F5** | `answer_care_questions` | Grounded patient Q&A over APPROVED care plan and protocol chunks via Chroma vector retrieval with exact embedding model `models/gemini-embedding-001`, strict out-of-scope refusal, and red-flag bypass. | **UNSTARTED** |
 
 > **Flow ID Notice**: Current instance F1 ID is `458d7c88-812b-4cb2-bc3f-ccccf809ed1a`. It pre-existed this repair and was updated in place; no flow was recreated or duplicated. Original-instance ID `e1267720-b42b-4bcf-aff5-1792a4871df1` is absent from the current inventory. Unrelated flows were not modified.
+> **F2 Instance ID**: `record_patient_checkin` is `9b6cc0a6-7006-4f07-86e9-f47b61c9b462`, created only after confirming no existing checkin-named flow. No scratch/duplicate flow was created.
 
 ---
 
@@ -143,14 +148,14 @@ On original ID `e1267720-b42b-4bcf-aff5-1792a4871df1`, two validations returned 
 ---
 ### 5.2 Handoff Next Actions (Immediate Sequence for Incoming Agent)
 1. **F1 Accepted**: Preserve model `gemini-3.5-flash-lite`, temperature 0, eight-field extraction/scorer contract, and existing named credential reference. The old `gemini-2.5-flash` 404 is resolved history, not a current blocker.
-2. **Authorized F2 Work**: Use the same model at temperature 0, structural red-flag bypass, deterministic baseline scoring, and all three synthetic acceptance cases from section 5.3.
-3. **Sessions & Audit**: Use the approved REST `/api/v1/run/{flow_id}` with explicit top-level `session_id: "demo-<patient_id>"`; component tweaks alone are ineffective on this instance. Verify message and trace IDs, capture actual outputs/bypass evidence, export verbatim, and commit atomically.
-4. **Stop Gate**: STOP after F2 and await operator instruction. Never start F3 in this workstream; model choices for F3/F5 remain pending.
+2. **F2 Accepted**: Preserve the native structural router, genuine deterministic scorer, exact escalation formatter, typed baseline/patient tweaks, and three recorded synthetic acceptance cases.
+3. **Sessions & Audit**: Use the approved REST `/api/v1/run/{flow_id}` with explicit top-level `session_id: "demo-<patient_id>"`; component tweaks alone are ineffective on this instance. Trace writes are asynchronous: match by actual session/run timestamp, not the first immediately returned latest trace.
+4. **STOP Now**: F1/F2 exports and actual transcripts are committed. Await operator instruction; never start F3 in this workstream. Model choices for F3/F5 remain pending.
 
 ---
 
 
-### 5.3 Flow F2: `record_patient_checkin` Specifications
+### 5.3 Flow F2: `record_patient_checkin` — Contract & Actual Acceptance
 * **Input Extraction**: Gemini `gemini-3.5-flash-lite`, `temperature: 0.0`, per operator decision **2026-10-03**.
 * **Output Schema**: JSON object with:
   * `symptoms`: array of symptom strings
@@ -181,6 +186,38 @@ On original ID `e1267720-b42b-4bcf-aff5-1792a4871df1`, two validations returned 
   1. `'Merasa lebih baik, obat teratur'` $\rightarrow$ Baseline HIGH remains HIGH or shows visible reduction.
   2. `'Hari ini masih sesak napas, kaki kanan bengkak, minum obat tidak teratur.'` $\rightarrow$ MEDIUM $\rightarrow$ HIGH transition with `"trigger_plan_review"`.
   3. `'dada sesak berat sekali'` $\rightarrow$ Escalation output WITHOUT passing through risk scorer.
+
+
+#### 5.3.1 Implemented Graph & Registration
+The seven-node/six-edge graph is `ChatInput → Gemini → ConditionalRouter`, then:
+* `false_result → SynCare Deterministic Check-in Scorer → normal ChatOutput`
+* `true_result → SynCare Red-flag Escalation Formatter → red-flag ChatOutput`
+
+The native router matches JSON boolean `red_flag: true` with regex `(?s).*"red_flag"\s*:\s*true\b.*` and passes the original extraction JSON. Native `lfx` 1.12.4 routing calls both `stop()` and `exclude_branch_conditionally()` for the inactive branch. Each branch has its own terminal ChatOutput; only the active output is returned. The scorer never substitutes for red-flag routing and rejects a flagged payload if it is incorrectly reached.
+
+Custom component source was registered via `/api/v1/custom_component`, then persisted into the two F2 nodes so inputs/outputs were genuinely derived from code. Output handles were regenerated through MCP disconnect/connect calls. Scorer method is `score_checkin`; formatter method is `format_escalation`. Both emit `Message(text=json.dumps(...))`. Model/temperature inspection confirmed `gemini-3.5-flash-lite`/0. Flow metadata references `GEMINI_API_KEY` with `load_from_db: true`; actual Gemini-backed runs succeeded without reading or editing globals.
+
+#### 5.3.2 Actual Tweaks & Isolated Sessions
+Use the approved REST `POST /api/v1/run/9b6cc0a6-7006-4f07-86e9-f47b61c9b462` with top-level `session_id: "demo-<patient_id>"`. Component tweak keys are:
+* Input `ChatInput-IW816`: `session_id`
+* Normal output `ChatOutput-pTVwm` and red output `ChatOutput-BdCAF`: `session_id`
+* Scorer `CustomComponent-0WfNa`: integer `baseline_score`, string `patient_id`
+* Configurable advanced demo intervals on the scorer: `high_interval_days: 1`, `medium_interval_days: 2`, `low_interval_days: 7` (not clinical guidance).
+
+Messages are not persisted (`should_store_message: false` on input and both outputs). Baselines are supplied separately from check-in text. Baseline **7** is the actual accepted F1 score; baseline **3** is the explicitly supplied synthetic MEDIUM case, not a newly calculated clinical baseline.
+
+| Patient / observed message and trace session | Baseline | Actual JSON result |
+|---|---:|---|
+| `chf-high` / `demo-chf-high` | 7 | No symptoms, regular adherence: **6/HIGH**, visible -1, `continue_monitoring`, interval 1 |
+| `chf-medium` / `demo-chf-medium` | 3 | Two symptoms, irregular adherence, **not red-flagged**: **6/HIGH**, MEDIUM→HIGH, `trigger_plan_review`, interval 1 |
+| `chf-redflag` / `demo-chf-redflag` | 7 | Exactly `{"action": "escalate_immediately", "reason": "dada sesak berat sekali"}`; no scorer execution |
+
+Both validations passed with `{"valid": true, "component_count": 5, "errors": []}`: five active vertices out of seven total is expected for one selected branch. All three final texts passed `json.loads`. The non-red payload includes baseline/current tiers, each adjustment's condition/applied/points, score, tier change, action, interval, complete extraction, `demo-heuristic-v1`, and disclaimers. No prompt misclassification or test rerun occurred; a literal quote retained by compact-spec parsing was corrected in the router pattern before tests.
+
+#### 5.3.3 Structural Bypass Evidence
+Red-flag trace `70a44e8b-cc76-45dc-98cc-96c85c4ab091` (`demo-chf-redflag`) contains Input, Gemini, If-Else, **Escalation Formatter**, and Chat Output spans, with **no scorer span**, including children. The scorer's retained build timestamp is unchanged from the prior medium run (`2026-10-03T13:15:37.974753Z`), before red-flag trace start `2026-10-03T13:15:38.133967`. This proves bypass; stale `valid: true` build records must not be misread as execution in the new run.
+
+Matched non-red traces are `3fba39ca-555b-40d5-81e6-6fc5ad7a6f46` (high) and `60299513-03bc-4d41-8b84-0472ff4f1beb` (medium). An immediate latest-trace read initially returned the previous high trace after the medium run; the committed inventory was then matched by session without rerunning the flow. Complete outputs, traces, mutation responses, and evidence are stored verbatim in the F2 transcript.
 
 ---
 
@@ -248,19 +285,19 @@ python3 -c "import json; d=json.load(open('exports/register_discharge_summary.js
 > **Note**: This is a local file structure smoke test only, **NOT a workflow execution test**.
 
 ### 6.3 MCP `run_flow` Schema Limitation
-The MCP schema has no top-level `session_id`. Actual `run_flow` with ChatInput/ChatOutput `session_id: "demo-chf-high"` tweaks returned the **flow UUID** in its response, output message, and trace: the API's effective graph session overrides component tweaks. The operator approved direct REST `POST /api/v1/run/{flow_id}` with top-level `session_id` and the same tweaks. F1's corrective run confirmed response/message/trace IDs all equal `demo-chf-high`. Use this REST route for all F2 `demo-<patient_id>` tests. Existing configured credentials are used privately; transcript headers are redacted. Message storage remains disabled on F1.
+The MCP schema has no top-level `session_id`. Actual `run_flow` with ChatInput/ChatOutput `session_id: "demo-chf-high"` tweaks returned the **flow UUID** in its response, output message, and trace: the API's effective graph session overrides component tweaks. The operator approved direct REST `POST /api/v1/run/{flow_id}` with top-level `session_id` and the same tweaks. F1's corrective run confirmed response/message/trace IDs all equal `demo-chf-high`; all three F2 runs likewise matched their `demo-<patient_id>` sessions. Existing configured credentials are used privately; transcript headers are redacted. Message storage is disabled on both flows.
 
 ---
 
 ## 7. Deliverables & Screenshot Capture Plan
 
-### Stage 1 (Current Actual State)
-1. Screenshot of the actual F1 build compilation error in the Langflow UI (opaque "Build error").
-2. Screenshot of `CustomComponent-UW8Uq` in the Langflow UI showing the stale `build_output` template method and unrefreshed parameters.
+### Current Passed F1/F2 — Operator Capture Suggestions
+1. F1 complete graph, Gemini `gemini-3.5-flash-lite`/temperature 0, and fixture output **7/HIGH** with all four factors and full episode.
+2. F1 REST-run trace/message showing `demo-chf-high` (MCP tweaks alone used the flow UUID; do not present that run as isolated).
+3. F2 complete graph showing separate normal-scoring and red-flag formatter branches.
+4. F2 scorer fields/tweaks: `baseline_score`, `patient_id`, and configurable demo interval inputs.
+5. F2 high and medium outputs: **6/HIGH** with -1, then **6/HIGH** with `trigger_plan_review` and `red_flag: false`.
+6. F2 severe case: exact action/reason JSON, `demo-chf-redflag` trace showing formatter **without scorer**, and unchanged prior scorer build timestamp.
 
-### Subsequent Stages (Post-Repair & Future Flows)
-1. F1 successful build graph and Chat Playground trace with fixture text.
-2. F2 red-flag routing branch and non-flag scoring run.
-3. F3 SATUSEHAT (satuseshat) JSON output structure.
-4. F4 `HumanInput` review modal and SQLite database write confirmation.
-5. F5 Q&A answer with source citation, out-of-context refusal, and red-flag escalation.
+### Future Flows — Unstarted, Do Not Begin Now
+F3 SATUSEHAT-shaped draft output, F4 human-review/SQLite persistence, and F5 grounded Q&A screenshots are future deliverables only. No current screenshots or successful runs are claimed for those flows.
