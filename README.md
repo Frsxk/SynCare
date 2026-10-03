@@ -8,7 +8,7 @@
 * **IBM Bob (Conversational Front-End)**: Manages patient and caregiver dialogue, collects daily symptom reports, and provides empathetic interactive communication.
 * **Langflow (Backend Workflow Orchestration)**: Handles structured data extraction, deterministic heuristic risk tiering, care plan drafting, human-in-the-loop clinical review gates, and grounded guideline retrieval.
 
-> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. Only Flow F1 exists as a non-functional draft that failed build validation. Flows F2 through F5 are completely unstarted.
+> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. F1's extraction schema and deterministic scorer have been repaired in place, but acceptance is **BLOCKED**: validation reaches Gemini and the provider returns `404 NOT_FOUND` for required model `gemini-2.5-flash`. No repaired-flow `run_flow` was performed. Flows F2 through F5 remain unstarted; F2 shares the same model requirement.
 
 ### Clinical Disclaimer & Synthetic Data Mandate
 * **SYNTHETIC DEMO ONLY**: All clinical data, patient profiles, and workflow artifacts are synthetic demonstrations.
@@ -24,7 +24,7 @@
 ```text
 .
 ├── exports/
-│   └── register_discharge_summary.json       # Raw Langflow flow export for F1 (4 nodes, 3 edges, ~69 KB)
+│   └── register_discharge_summary.json       # Verbatim redacted Langflow export for F1 (4 nodes, 3 edges)
 ├── fixtures/
 │   └── discharge-chf-high.txt                # Synthetic Indonesian CHF discharge summary text (357 bytes)
 ├── protocols/
@@ -33,7 +33,7 @@
 ├── reports/
 │   ├── langflow-discovery.txt                # Langflow MCP environment & component discovery report
 │   ├── langflow-discovery-transcript.txt     # Raw and summarized tool schemas & discovery transcript
-│   └── register_discharge_summary-test.txt   # F1 flow build/validation failure transcript & audit
+│   └── register_discharge_summary-test.txt   # F1 repair transcript, model-404 evidence, local scorer smoke
 └── README.md                                 # Full agent handoff documentation
 ```
 
@@ -42,7 +42,7 @@
 * [`protocols/medication-safety.txt`](protocols/medication-safety.txt) (391 words): Generic Indonesian medication adherence draft emphasizing schedule consistency, safe storage, and strict prohibition of unapproved dosage changes. Strictly pending clinician review.
 * [`reports/langflow-discovery.txt`](reports/langflow-discovery.txt): Environment discovery report documenting connected Langflow MCP tools, component registry, and inventory of 35 existing server flows.
 * [`reports/langflow-discovery-transcript.txt`](reports/langflow-discovery-transcript.txt): Tool schema extractions and discovery transcript.
-* [`reports/register_discharge_summary-test.txt`](reports/register_discharge_summary-test.txt): Complete audit transcript of F1 build validation failure and diagnostic findings.
+* [`reports/register_discharge_summary-test.txt`](reports/register_discharge_summary-test.txt): Factual F1 repair transcript, verbatim mutation/validation results, provider-404 trace, reference-name evidence, and explicitly local scorer smoke outputs.
 * [`exports/register_discharge_summary.json`](exports/register_discharge_summary.json): Exact raw export of F1 flow graph (nodes, edges, config, and source).
 
 ---
@@ -51,22 +51,23 @@
 
 | Flow ID | Flow Name | Purpose & Scope | Implementation Status |
 |---|---|---|---|
-| **F1** | `register_discharge_summary` | Ingests discharge summary text, extracts clinical episode parameters via LLM, and calculates a deterministic DEMO risk tier (LOW / MEDIUM / HIGH). **NOT a calibrated 30-day prediction model**. | **DRAFT — FAILED VALIDATION (Schema Deviant)** |
-| **F2** | `record_patient_checkin` | Ingests daily check-in text, detects 5 red-flag categories (immediate escalation), tracks non-flag symptom trajectory / adherence, calculates next check-in interval, and triggers plan review on tier changes. | **UNSTARTED** |
+| **F1** | `register_discharge_summary` | Ingests discharge summary text, extracts clinical episode parameters via LLM, and calculates a deterministic DEMO risk tier (LOW / MEDIUM / HIGH). **NOT a calibrated 30-day prediction model**. | **STRUCTURE REPAIRED — VALIDATION BLOCKED (Gemini model 404)** |
+| **F2** | `record_patient_checkin` | Ingests daily check-in text, detects 5 red-flag categories (immediate escalation), tracks non-flag symptom trajectory / adherence, calculates next check-in interval, and triggers plan review on tier changes. | **UNSTARTED — shares model blocker** |
 | **F3** | `draft_followup_plan` | Generates a JSON draft follow-up care plan in Bahasa Indonesia plus SATUSEHAT-shaped FHIR resources under key `satuseshat` (`careplan`, `servicerequest`, `task`). | **UNSTARTED** |
 | **F4** | `review_care_plan` | Human-in-the-loop review via `HumanInput`, SQLite persistence (`approved_plans`, `audit_log`), and plan routing (`Approve`, `Request Changes`, `Escalate`). | **UNSTARTED** |
 | **F5** | `answer_care_questions` | Grounded patient Q&A over APPROVED care plan and protocol chunks via Chroma vector retrieval with exact embedding model `models/gemini-embedding-001`, strict out-of-scope refusal, and red-flag bypass. | **UNSTARTED** |
 
-> **Flow ID Notice**: F1 was created on the local server with instance ID `e1267720-b42b-4bcf-aff5-1792a4871df1`. This UUID is server-instance specific; whether re-importing the flow preserves this UUID or assigns a new one is unasserted.
+> **Flow ID Notice**: Current instance F1 ID is `458d7c88-812b-4cb2-bc3f-ccccf809ed1a`. It pre-existed this repair and was updated in place; no flow was recreated or duplicated. Original-instance ID `e1267720-b42b-4bcf-aff5-1792a4871df1` is absent from the current inventory. Unrelated flows were not modified.
 
 ---
 
-## 4. F1 (`register_discharge_summary`) — Detailed Audit & Failure State
+## 4. F1 (`register_discharge_summary`) — Repair Audit & Model Availability Blocker
 
 ### 4.1 Expected Pipeline & Deterministic Scoring
 1. **Input**: Synthetic Indonesian discharge summary text (`fixtures/discharge-chf-high.txt`: 62M, CHF NYHA III, LOS 6 days, emergency admission via IGD, DM2 + Hypertension + CKD stage 3 [3 comorbidities], 2 admissions in past 12m).
-2. **LLM Extraction**: `GoogleGenerativeAIComponent` using model `gemini-2.5-flash` at `temperature: 0.0`.
-   * **API Key Requirement**: Must bind to the Langflow global variable `GEMINI_API_KEY` (`load_from_db: true`). **NEVER stored as a literal string**.
+2. **LLM Extraction**: Exact type `ext:google:GoogleGenerativeAIComponent@official`, model `gemini-2.5-flash`, explicit `temperature: 0`.
+   * **Episode schema**: Exactly `diagnosis` (string), `medications`, `instructions`, `followup_needs` (arrays of stated strings), `length_of_stay_days`, `comorbidity_count`, `admissions_prior_12m` (nonnegative integer or `null`), and `admission_type` (`emergency`, `elective`, or `unknown`). IGD/emergency maps to `emergency`; absent facts remain empty/null/unknown, never invented.
+   * **Credential reference**: Read-only GET of this flow confirms `api_key.value: "GEMINI_API_KEY"` and `load_from_db: true`. This is a variable NAME, not a credential value; no global variables were read or changed. MCP inspection/export redacts this non-empty reference. Binding was left untouched; a successful current Gemini execution is still unobserved.
 3. **Deterministic Scorer (`demo-heuristic-v1`)**:
    * Length of Stay (LOS) $\ge 5$ days: **+2 points**
    * Emergency admission (`masuk via IGD`): **+1 point**
@@ -78,8 +79,8 @@
      * **HIGH**: $\ge 4$ points
    * **Expected Fixture Output**: $2 + 1 + 2 + 2 = 7$ points $\rightarrow$ **HIGH** tier (all 4 factors present).
 
-### 4.2 Actual Build Validation Failure
-When calling `validate_flow`, the build failed identically on two consecutive attempts:
+### 4.2 Current Validation Blocker (2026-10-03)
+One `validate_flow` call returned:
 
 ```json
 {
@@ -94,29 +95,24 @@ When calling `validate_flow`, the build failed identically on two consecutive at
 }
 ```
 
-* **Build Trace**: Only `ChatInput-vk8pT` recorded a valid build timestamp (`builds: {"ChatInput-vk8pT": {"valid": true}}`). The exact point of failure during graph compilation is unknown; do **NOT** assert that downstream graph compilation is the proven cause.
-* **Stop Triggered**: Per the project two-failure rule, execution stopped immediately.
-* **Execution Record**: `run_flow` was **NEVER run**. No session isolation was exercised.
+Read-only REST trace discovery isolated the actual current cause. Trace `9441f3c0-6502-41cd-8b2e-71349aeecac7`, timestamp `2026-10-03T12:18:04.560578`, records:
 
-### 4.3 Diagnostic Findings & Observed Inconsistencies
-1. **Stale CustomComponent Output Method**:
-   Inspection via `get_component_info` showed that `CustomComponent-UW8Uq` retained default template output properties:
-   * Output method remained `"build_output"` instead of `"score_risk"`.
-   * Leftover template param `"input_value": "Hello, World!"` remained unrefreshed.
-2. **Import Namespace Mismatch Hypothesis**:
-   * The server's native components all reside in the `lfx` namespace (`lfx` version 1.12.2, e.g., `lfx.components.custom_component.custom_component.CustomComponent`).
-   * The custom scorer script imported from `langflow` (`from langflow.custom import Component`).
-   * `[INFERENCE]` Package availability of `"langflow"` on this server runtime is unverified; whether the `lfx` vs `langflow` import discrepancy is the root cause of the build failure is a candidate hypothesis, **NOT a proven root cause**. Incoming agents must discover the actual supported API on the server before replacing imports; no corrective command is proven.
-3. **API Key Global Binding Status**:
-   * In the exported JSON, `api_key` has `load_from_db: true` and `value: ""`.
-   * Having an empty field and `load_from_db: true` **DOES NOT prove that the named `GEMINI_API_KEY` global is actually bound**. Verification requires inspecting confirmed global reference metadata and exercising a successful Gemini execution.
-   * Do **NOT** rename or edit existing global variables.
-4. **Extraction Prompt Schema Deviations**:
-   The prompt stored on the Gemini node (`system_message`) deviated significantly from the requested episode schema:
-   * **Requested Contract**: `diagnosis`, `medications`, `instructions`, `followup_needs`, `length_of_stay_days`, `admission_type`, `comorbidity_count`, `admissions_prior_12m`.
-   * **Actual Stored Prompt (Summary)**: Asked only for `length_of_stay_days`, `emergency_admission` (boolean), `comorbidities` (list), `admissions_prior_12m`, and `extraction_notes`.
-   * **Missing Fields**: `diagnosis`, `medications`, `instructions`, `followup_needs`, `admission_type`, `comorbidity_count`.
-   * **Downstream Consequence**: The scorer does not receive or validate the full episode payload.
+```text
+Error calling model 'gemini-2.5-flash' (NOT_FOUND): 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).', 'status': 'NOT_FOUND'}}
+```
+
+Only ChatInput has a fresh build record from this validation; downstream successful records are stale from the preceding day and are **not** repair acceptance evidence. No second validation or `run_flow` was attempted. The required model and temperature remain unchanged; no substitute model was selected. Operator authorization/model availability is the prerequisite to continue. `[INFERENCE]` A model-specific 404 rather than 401/403 suggests authentication succeeded, but is not a successful Gemini run.
+
+### 4.3 Implemented Structure & Limited Verification
+* Current runtime/native export identifies `lfx` **1.12.4**, not the prior instance's 1.12.2. The pre-existing current scorer already used `lfx.custom`, `lfx.io`, and `lfx.schema.message`; these supported imports were retained.
+* The scorer strips JSON markdown fences, requires exactly all eight episode keys, validates value types, permits null/unknown facts, and retains the complete `episode`. It emits `score`, `tier`, all four `risk_factors` (value/threshold/points/met), `rationale`, `label: "demo-heuristic-v1"`, `missing_fields`, and synthetic/not-clinically-validated disclaimers via `Message(text=json.dumps(...))`.
+* `get_component_info` confirms registered `output.method: "score_risk"` and `input_value: ""`; no `"Hello, World!"` parameter remains. Existing inputs, outputs, and edge handles were preserved. Installed MCP source shows code configuration alone does **not** re-derive the template; full custom-code template derivation is available through `/api/v1/custom_component`. No registration mismatch existed on this instance.
+* ChatOutput's `clean_data` is explicitly false. Native `safe_convert` returns Message text directly; Data serialization can instead introduce JSON markdown fences. Final repaired ChatOutput behavior is **not yet exercised end-to-end**.
+* Authorized throwaway local checks: exact scorer code compiled and imported/instantiated with the installed server environment. Hand-written fixture-shaped extraction yielded **7/HIGH**, all four factors met; all-unknown extraction yielded **0/LOW**, with eight missing fields. Both fenced input cases produced JSON text parseable with `json.loads`. These are **local scorer unit smokes, not Gemini extraction or flow runs**. Temporary scripts/bytecode were deleted.
+* `notify_done` acknowledged a **blocked** summary. The export is the unmodified redacted `export_flow` tool output. Full mutation results, trace response, offered model list, and local smoke output are in the transcript.
+
+### 4.4 Historical Old-Instance Failure (Unprovable Here)
+On original ID `e1267720-b42b-4bcf-aff5-1792a4871df1`, two validations returned the same opaque `"Build error"` and only ChatInput recorded a build. The old export stored `langflow.*` scorer imports while native sources used `lfx` 1.12.2, stale method `build_output`, `"Hello, World!"`, empty API reference, and a deviating extraction schema. These are historical observations; the exact old failure cause remains unproven. The current model-404 trace does **not** establish the root cause on that absent instance.
 
 ---
 
@@ -126,7 +122,7 @@ When calling `validate_flow`, the build failed identically on two consecutive at
 * **Per-Flow Lifecycle**: discover $\rightarrow$ one-shot create $\rightarrow$ validate $\rightarrow$ real run $\rightarrow$ `notify_done` $\rightarrow$ redacted export + actual transcript $\rightarrow$ atomic commit.
 * **Error Discipline**: Two identical consecutive errors $\rightarrow$ **STOP immediately**.
 * **Safety Mandates**: Preserve other user flows on the server; never store or commit literal API secrets.
-* **Runtime Repair Hold**: Until the operator authorizes repair, no runtime modifications may be executed.
+* **Runtime Repair Hold**: F1 structural repair is authorized and retained. Further validation/model execution is on hold pending the operator's model decision; F2 still requires explicit authorization, and F3 must not begin.
 
 **Exact Stop & Resume Phrases (Do NOT invent dialogue)**:
 1. **STOP1** (after completing F1 and F2): Resume upon operator command:
@@ -141,21 +137,17 @@ When calling `validate_flow`, the build failed identically on two consecutive at
 
 ---
 ### 5.2 Handoff Next Actions (Immediate Sequence for Incoming Agent)
-1. **F1 Schema Restoration & Scorer Migration**:
-   - Restore the full requested episode extraction schema on Gemini: `diagnosis`, `medications`, `instructions`, `followup_needs`, `length_of_stay_days`, `admission_type`, `comorbidity_count`, `admissions_prior_12m`.
-   - Migrate the deterministic Python scorer to consume `admission_type` and `comorbidity_count`, while retaining and passing through all extracted episode fields.
-2. **Custom Component Template & Import Discovery**:
-   - Discover the valid runtime import and template refresh mechanism for `CustomComponent` on this server (`lfx` 1.12.2).
-3. **Verify Global Credential Binding**:
-   - Verify confirmed global reference binding for `GEMINI_API_KEY` (`load_from_db: true`).
-4. **Validation & Real Fixture Run**:
-   - Validate flow; respect the two-failure STOP rule (no indefinite validation loops).
-   - Once compilation passes, execute real run against `fixtures/discharge-chf-high.txt`.
-   - Assert valid JSON output with score 7, HIGH tier, all 4 factors, and rationale.
-5. **Audit Artifacts & Atomic Commit**:
-   - Save actual run transcript and redacted export JSON; commit atomically.
-6. **Authorization Gate**:
-   - Resume F2 ONLY when explicitly authorized by operator (await STOP1 resume phrase: `checkpoint-1-mvp-intake selesai, lanjut`).
+1. **Resolve the Shared Model Prerequisite**:
+   - Required `gemini-2.5-flash` returned an evidenced provider 404. Do not substitute a model or retry validation until the operator resolves availability or explicitly changes the requirement.
+   - The component registry's offered model list is recorded verbatim in the F1 transcript; offered options alone do not prove provider availability.
+2. **Resume F1 Acceptance Only After Authorization**:
+   - Keep the restored schema, scorer, exact model/temperature, and existing named credential reference.
+   - Validate the flow; respect the two-identical-failure stop rule.
+   - Only after validation passes, run the exact fixture with `demo-chf-high` session tweaks and confirm final ChatOutput is valid JSON with score 7, HIGH, all four factors, all eight episode fields, rationale, and disclaimers.
+   - Record successful Gemini execution and actual session evidence; local scorer smokes are insufficient.
+3. **Audit & Authorization Gate**:
+   - Update the raw export, actual transcript, and README atomically after acceptance.
+   - F2 remains unstarted and shares the unresolved model requirement. Start F2 only on explicit operator instruction; never begin F3 in this workstream.
 
 ---
 
@@ -243,7 +235,7 @@ When calling `validate_flow`, the build failed identically on two consecutive at
 ## 6. Manual Setup, Operator URL & Local Verification
 
 ### 6.1 Langflow Server URL & Flow Import
-* **Server URL**: Use the operator's configured Langflow server URL (unknown; do **NOT** assume any hardcoded default or local host address).
+* **Server URL**: The configured MCP connection for the current Windows instance was discovered as `http://127.0.0.1:7860`; this is an observed instance setting, not a portable default. Existing credentials were used without printing or writing credential values.
 * **Import Protection**: Check list_flows first. Import via UI only if named flow is absent; otherwise inspect/update existing flow; importer duplicate behavior is unverified.
 
 ### 6.2 Local Artifact Smoke Test (No Workflow Execution)
@@ -256,7 +248,7 @@ python3 -c "import json; d=json.load(open('exports/register_discharge_summary.js
 > **Note**: This is a local file structure smoke test only, **NOT a workflow execution test**.
 
 ### 6.3 MCP `run_flow` Schema Limitation
-The connected Langflow MCP `run_flow` tool schema does not provide a top-level `session_id` parameter. Session identification (e.g., `demo-chf-high`) must be passed via `tweaks` targeting the advanced fields of `ChatInput` and `ChatOutput` (e.g., `{"ChatInput-vk8pT": {"session_id": "demo-chf-high"}}`). This tweak mechanism is currently untested on this server.
+The MCP `run_flow` schema has no top-level `session_id`. Both current ChatInput (`ChatInput-wQRXg`) and ChatOutput (`ChatOutput-dkoVg`) already contain `session_id: "demo-chf-high"` with message storage disabled. The repaired-flow run and its session tweaks were **not exercised**, because validation is blocked. Current validation's REST trace uses the flow UUID as its session ID, so configured component session values must not be mistaken for run-level trace isolation. Future authorized acceptance should supply tweaks to both components, inspect actual message and trace session IDs, and report each separately.
 
 ---
 
