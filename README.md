@@ -8,7 +8,7 @@
 * **IBM Bob (Conversational Front-End)**: Manages patient and caregiver dialogue, collects daily symptom reports, and provides empathetic interactive communication.
 * **Langflow (Backend Workflow Orchestration)**: Handles structured data extraction, deterministic heuristic risk tiering, care plan drafting, human-in-the-loop clinical review gates, and grounded guideline retrieval.
 
-> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. **F1 and F2 PASSED** their synthetic acceptance cases on operator-authorized `gemini-3.5-flash-lite` at temperature 0 (commits `d41a180`, `ca3ea87`). F1 yields valid JSON 7/HIGH with complete episode; F2 yields 6/HIGH monitoring, MEDIUM→HIGH plan review, and exact red-flag escalation with the scorer structurally bypassed. REST message/trace session isolation was proven. On 2026-10-04, the operator issued the STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut`, authorizing F3 and F4 through STOP 2. **F3 and F4 are IN PROGRESS**; F5 remains UNSTARTED.
+> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. **F1–F3 PASSED** their synthetic acceptance cases. F1 yields 7/HIGH with complete episode; F2 proves tier adjustment and structural red-flag bypass; F3 yields a guarded Indonesian `satuseshat` draft and fail-closed missing-facts JSON. On 2026-10-04 the operator authorized F3/F4 through STOP 2. **F4 remains IN PROGRESS**; F5 remains UNSTARTED.
 
 ### Clinical Disclaimer & Synthetic Data Mandate
 * **SYNTHETIC DEMO ONLY**: All clinical data, patient profiles, and workflow artifacts are synthetic demonstrations.
@@ -25,9 +25,12 @@
 .
 ├── exports/
 │   ├── register_discharge_summary.json       # Verbatim redacted F1 export (4 nodes, 3 edges)
-│   └── record_patient_checkin.json           # Verbatim redacted F2 export (7 nodes, 6 edges)
+│   ├── record_patient_checkin.json           # Verbatim redacted F2 export (7 nodes, 6 edges)
+│   └── draft_followup_plan.json              # Verbatim redacted F3 export (6 nodes, 6 edges)
 ├── fixtures/
-│   └── discharge-chf-high.txt                # Synthetic Indonesian CHF discharge summary text (357 bytes)
+│   ├── discharge-chf-high.txt                # Synthetic Indonesian CHF discharge summary text
+│   ├── f3-plan-input-chf-high.json           # Actual F1 JSON plus synthetic supplied scheduling facts
+│   └── f3-plan-input-missing-facts.json      # Same patient, empty medications, absent date/contact
 ├── protocols/
 │   ├── hf-aftercare.txt                      # Generic CHF post-discharge educational draft (429 words)
 │   └── medication-safety.txt                 # Generic medication adherence and safety draft (391 words)
@@ -35,7 +38,8 @@
 │   ├── langflow-discovery.txt                # Langflow MCP environment & component discovery report
 │   ├── langflow-discovery-transcript.txt     # Raw and summarized tool schemas & discovery transcript
 │   ├── register_discharge_summary-test.txt   # F1 history and actual passed fixture/session evidence
-│   └── record_patient_checkin-test.txt       # F2 full actual transcript, three runs, bypass proof
+│   ├── record_patient_checkin-test.txt       # F2 full actual transcript, three runs, bypass proof
+│   └── draft_followup_plan-test.txt          # F3 actual transcript, two isolated runs, guardrail proof
 └── README.md                                 # Full agent handoff documentation
 ```
 
@@ -48,6 +52,8 @@
 * [`exports/register_discharge_summary.json`](exports/register_discharge_summary.json): Exact raw export of F1 flow graph (nodes, edges, config, and source).
 * [`reports/record_patient_checkin-test.txt`](reports/record_patient_checkin-test.txt): Full actual F2 construction/registration transcript, isolated REST tests, exact outputs, and scorer-bypass evidence.
 * [`exports/record_patient_checkin.json`](exports/record_patient_checkin.json): Exact raw redacted F2 flow export.
+* [`reports/draft_followup_plan-test.txt`](reports/draft_followup_plan-test.txt): Actual F3 mutations, validation, high/missing-facts outputs, source-input provenance, and session/guardrail evidence.
+* [`exports/draft_followup_plan.json`](exports/draft_followup_plan.json): Exact unmodified MCP export of the six-node guarded drafting flow.
 
 ---
 
@@ -57,7 +63,7 @@
 |---|---|---|---|
 | **F1** | `register_discharge_summary` | Ingests discharge summary text, extracts clinical episode parameters via LLM, and calculates a deterministic DEMO risk tier (LOW / MEDIUM / HIGH). **NOT a calibrated 30-day prediction model**. | **PASSED — fixture 7/HIGH; isolated REST session** |
 | **F2** | `record_patient_checkin` | Ingests daily check-in text, detects 5 red-flag categories (immediate escalation), tracks non-flag symptom trajectory / adherence, calculates next check-in interval, and triggers plan review on tier changes. | **PASSED — all 3 isolated cases; structural bypass proven** |
-| **F3** | `draft_followup_plan` | Generates a JSON draft follow-up care plan in Bahasa Indonesia plus SATUSEHAT-shaped FHIR resources under key `satuseshat` (`careplan`, `servicerequest`, `task`). | **IN PROGRESS** |
+| **F3** | `draft_followup_plan` | Generates a guarded Indonesian JSON draft with `satuseshat` (`careplan`, `servicerequest`, `task`) and mandatory human-approval status; fails closed on missing facts. | **PASSED — HIGH draft and missing-facts cases** |
 | **F4** | `review_care_plan` | Human-in-the-loop review via `HumanInput`, SQLite persistence (`approved_plans`, `audit_log`), and plan routing (`Approve`, `Request Changes`, `Escalate`). | **IN PROGRESS** |
 | **F5** | `answer_care_questions` | Grounded patient Q&A over APPROVED care plan and protocol chunks via Chroma vector retrieval with exact embedding model `models/gemini-embedding-001`, strict out-of-scope refusal, and red-flag bypass. | **UNSTARTED** |
 
@@ -224,7 +230,7 @@ Matched non-red traces are `3fba39ca-555b-40d5-81e6-6fc5ad7a6f46` (high) and `60
 ### 5.4 Flow F3: `draft_followup_plan` Specifications
 * **LLM Engine**: Gemini `gemini-3.5-flash-lite`, `temperature: 0.2`.
 * **Model Selection Note**: `gemini-2.5-flash` returns provider 404 on this account. F3 will use `gemini-3.5-flash-lite` at temperature 0.2, extending the operator's F1/F2 model choice while keeping the F3 spec temperature 0.2 unchanged.
-* **Implementation Status**: **IN PROGRESS** (authorized via STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut` on 2026-10-04).
+* **Implementation Status**: **PASSED**, flow `bd4488e6-e8fb-4107-b497-1b5178bc8371`. Authorization came from STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut` on 2026-10-04.
 * **Care Intensity Parameters (Demo Guidelines)**:
   * **HIGH**: Nurse phone call within 24 hours + daily check-ins.
   * **MEDIUM**: Check-in every 2 days + outpatient clinic visit in 7 days.
@@ -237,6 +243,20 @@ Matched non-red traces are `3fba39ca-555b-40d5-81e6-6fc5ad7a6f46` (high) and `60
     * `task`: array of task objects: `[{"code": "...", "status": "requested", "priority": "..."}]`
 * **Guardrails**: Guard against absent episode facts; do **NOT** invent diagnoses or medications. Require supplied actual data.
 * **Status**: All generated plans marked **DRAFT pending human approval**.
+
+#### F3 Implemented Guardrails & Actual Acceptance
+Input is one JSON object with `f1_scored_output` (the complete actual F1 output), `patient_id`, `followup_date`, and `hotline`. The HIGH fixture preserves the actual accepted F1 ChatOutput JSON bytes from its transcript line 3669, then supplies synthetic date `2026-10-11` and explicitly non-dialable routine contact `HOTLINE-DEMO-SINTETIS`. The missing fixture keeps the same patient but empties medications and omits both scheduling facts.
+
+Graph: `ChatInput → deterministic Plan Fact Gate → Gemini → deterministic Draft Guard → ChatOutput`, with a separate `Fact Gate.error → error ChatOutput`. Before generation, the gate validates the eight-field episode, score/tier/label agreement and scheduling facts, and injects HIGH/MEDIUM/LOW intensity deterministically. Missing facts emit explicit error JSON and structurally bypass Gemini rather than inventing a partial plan.
+
+The real Gemini call at temperature 0.2 selects one of two approved Indonesian narratives and fills the exact injected resource structure. The post-generation guard enforces exact resource equality and a closed factual narrative vocabulary: arbitrary invented medication/diagnosis strings fail even if a medical-keyword blacklist would miss them. Date/phone-pattern checks provide defense in depth. This deliberately bounds phrasing freedom; reviewer notes can choose a clearer approved narrative but cannot change clinical facts. Accepted output includes `status: "DRAFT pending human approval"`, `label`, disclaimer, `missing_facts: []`, deterministic `care_intensity`, `patient_id`, `tier`, and preserved `source_input` for reviewed redrafting. Resources are FHIR-shaped demo objects, **not** a validated FHIR bundle or SATUSEHAT submission.
+
+Validation: `{"valid": true, "component_count": 5, "errors": []}` (five active vertices of six total).
+* HIGH test (`demo-chf-high`, trace `414bf0f6-65fb-471a-af19-9c7b325ebb15`): valid JSON, DRAFT status, nurse-call-within-24h and daily check-ins, all required `satuseshat` keys, exact supplied date/contact in `patientInstruction`.
+* Missing test (`demo-chf-missing`, trace `79b83a91-ae4b-4eff-b8d1-70f325f4525b`): explicit `missing_or_invalid_facts` JSON with `missing_facts: ["medications", "followup_date", "hotline"]`; no invented facts and no Gemini span in the current trace.
+
+Both response/message/trace session IDs matched the supplied REST top-level sessions. No prompt correction or test rerun was needed. The installed version endpoint reports **Langflow 1.12.2**; generated component metadata confirms **lfx 1.12.4**. Credential binding remains the existing `GEMINI_API_KEY` reference, never a literal key. Full verbatim evidence is in the F3 transcript.
+
 
 ---
 

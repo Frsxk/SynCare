@@ -1,0 +1,55 @@
+{
+  "f1_scored_output": {
+    "episode": {
+      "diagnosis": "gagal jantung NYHA III",
+      "medications": [],
+      "instructions": [
+        "timbang berat badan tiap pagi",
+        "batasi garam",
+        "kontrol minggu depan"
+      ],
+      "followup_needs": [
+        "kontrol minggu depan"
+      ],
+      "length_of_stay_days": 6,
+      "admission_type": "emergency",
+      "comorbidity_count": 3,
+      "admissions_prior_12m": 2
+    },
+    "score": 7,
+    "tier": "HIGH",
+    "risk_factors": {
+      "length_of_stay_days": {
+        "value": 6,
+        "threshold": 5,
+        "points": 2,
+        "met": true
+      },
+      "admission_type": {
+        "value": "emergency",
+        "threshold": "emergency",
+        "points": 1,
+        "met": true
+      },
+      "comorbidity_count": {
+        "value": 3,
+        "threshold": 3,
+        "points": 2,
+        "met": true
+      },
+      "admissions_prior_12m": {
+        "value": 2,
+        "threshold": 2,
+        "points": 2,
+        "met": true
+      }
+    },
+    "rationale": "length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.",
+    "label": "demo-heuristic-v1",
+    "missing_fields": [],
+    "not_clinically_validated": true,
+    "synthetic_demo_only": true,
+    "disclaimer": "Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required."
+  },
+  "patient_id": "chf-high"
+}
