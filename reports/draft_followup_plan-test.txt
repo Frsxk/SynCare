@@ -1,5 +1,7 @@
 SynCare F3 draft_followup_plan — ACTUAL BUILD AND ACCEPTANCE TRANSCRIPT
 2026-10-04 | FINAL STATUS PASSED | Flow bd4488e6-e8fb-4107-b497-1b5178bc8371
+PUBLICATION CORRECTION (2026-10-04): F3 runtime acceptance PASSED, but its original committed export was INVALID JSON because the rendered tool text contained middle elision. The earlier complete/unmodified-export claim was incorrect. A fresh read-only export restored the full original raw artifact, without F3 runtime/source/prompt changes; exact correction evidence appears below.
+
 
 AUTHORIZATION / COORDINATION (narrative)
 Operator STOP1 resume phrase (verbatim): "checkpoint-1-mvp-intake selesai, lanjut. Continue productive work until STOP 2 achieved."
@@ -2187,5 +2189,17 @@ Missing output is explicit missing_or_invalid_facts, missing_facts medications,
 followup_date,hotline; no invented values; its current trace has no Gemini or final
 guard span, proving pre-generation exclusion. Both response/Message/trace sessions
 match demo-chf-high/demo-chf-missing and traces status ok. No prompt fix or test
-rerun needed. notify_done succeeded; export file is unmodified export_flow text.
+rerun needed. notify_done succeeded. The original saved export was truncated presentation text rather than the complete raw response; its publication was corrected on 2026-10-04 as recorded below.
 Secret-pattern scan completed before writing/commit. No git push. F4 next; not F5.
+
+2026-10-04 — EXACT ARTIFACT PUBLICATION CORRECTION
+The originally committed exports/draft_followup_plan.json failed JSON parsing at line 483, column 1, character 29317. Earlier wording claiming an unmodified complete export was incorrect; the workflow's actual HIGH and missing-facts acceptance results remain valid.
+Actual fresh call: mcp__langflow_export_flow
+Actual args: {"flow_id":"bd4488e6-e8fb-4107-b497-1b5178bc8371"}
+Full original response artifact: artifact://157 (1813 lines, 104887 UTF-8 bytes).
+Exact captured truncation metadata: {"direction":"middle","truncatedBy":"middle","totalLines":1813,"totalBytes":104887,"outputLines":1071,"outputBytes":60033,"maxBytes":61440,"headRange":{"start":1,"end":482},"tailRange":{"start":1226,"end":1813},"elidedLines":743,"elidedBytes":44876,"artifactId":"157"}
+The raw artifact was read in bounded verbatim chunks; only the read tool's added pagination footer was excluded. Joined UTF-8 byte count matched totalBytes exactly, and JSON content matched the complete structured MCP result. The export now contains that full original raw response, never reconstructed. F3 graph/source/prompt and runtime settings were not mutated.
+Actual json.load verification: top-level keys ["id","name","description","data"]; nodes 6; edges 6. No truncation markers in the export or any embedded source string. Secret-pattern scan passed. All four exports parsed with expected counts F1 4/3, F2 7/6, F3 6/6, F4 12/11.
+F4 Request Changes later executed the actual F3 through native RunFlow and materially changed the exact requested nonclinical opening, while retaining DRAFT status and unchanged resources/facts. Full original output and displayable projections are in the F4 report appendix; this specific safe clarity change required no F3 logic expansion.
+The artifact repair is committed separately before the F4 feature commit.
+

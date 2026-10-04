@@ -7,6 +7,8 @@ Narrative is not verbatim evidence; VERBATIM sections contain actual response te
 HTTP headers are REDACTED: x-api-key=[REDACTED]; Content-Type=application/json.
 No global variables read/edited and no literal credential written. No git push.
 ================================================================================
+PUBLICATION CORRECTION (2026-10-04): The original committed F2 export was INVALID JSON: its saved presentation text contained […1093ln elided…] at line 508 and a reader footer. Earlier claims that it was a complete unmodified export were incorrect. Runtime acceptance remains passed. A fresh read-only export_flow call restored the full original raw artifact without rebuilding or mutating F2; see the appended correction evidence.
+
 
 PREREQUISITE / AUTHORIZATION (narrative)
 --------------------------------------
@@ -679,7 +681,7 @@ RESULT (VERBATIM tool text):
 CALL mcp__langflow_export_flow
 ARGS (exact submitted JSON):
 {"flow_id": "9b6cc0a6-7006-4f07-86e9-f47b61c9b462"}
-RESULT: exact raw tool text persisted to exports/record_patient_checkin.json; not reconstructed.
+HISTORICAL PUBLICATION CLAIM (INCORRECT): rendered tool text was persisted to exports/record_patient_checkin.json; it was truncated and invalid JSON. The complete raw payload was restored on 2026-10-04 as recorded below.
 
 CALL mcp__langflow_list_flows
 ARGS (exact submitted JSON):
@@ -851,8 +853,7 @@ FINAL ACCEPTANCE (narrative, based on actual assertions)
 - chf-redflag: exact severe quote -> exact escalation action/reason only,
   scorer structurally bypassed with current-trace and unchanged-build proof.
 - All three actual message/trace sessions are isolated as required.
-- notify_done acknowledged completed modifications; raw export is exact unmodified
-  export_flow text. Closing checkin inventory contains this one named F2 only.
+- notify_done acknowledged completed modifications. The initial saved export was truncated presentation text, not the complete raw export; this publication defect was corrected on 2026-10-04. Closing checkin inventory contains this one named F2 only.
 
 FILES / OPERATOR SCREENSHOTS / STOP
 -----------------------------------
@@ -865,3 +866,14 @@ output6/HIGH trigger_plan_review; redflag exact output and trace listing formatt
 but no scorer. F1 graph/output7/HIGH and demo-chf-high trace are also available.
 STOP after F2. F3 was not started; no unrelated flows altered and no git push.
 ================================================================================
+
+2026-10-04 — EXACT ARTIFACT PUBLICATION CORRECTION
+Prior committed export failed JSON parsing at line 508, column 1, character 29290. Its presentation marker was […1093ln elided…]; the historical footer referenced artifact://49. No runtime/config/source change was made.
+Actual fresh call: mcp__langflow_export_flow
+Actual args: {"flow_id":"9b6cc0a6-7006-4f07-86e9-f47b61c9b462"}
+Full original response artifact: artifact://170 (2250 lines, 127985 UTF-8 bytes).
+Exact captured truncation metadata: {"direction":"middle","truncatedBy":"middle","totalLines":2250,"totalBytes":127985,"outputLines":1126,"outputBytes":61289,"maxBytes":61440,"headRange":{"start":1,"end":538},"tailRange":{"start":1664,"end":2250},"elidedLines":1125,"elidedBytes":66719,"artifactId":"170"}
+The raw artifact was read in bounded verbatim chunks; only the read tool's added pagination footer was excluded. Joined UTF-8 byte count matched totalBytes exactly, and JSON content matched the complete structured MCP result. exports/record_patient_checkin.json now contains that full original raw response, never reconstructed or serialized from a new graph.
+Actual json.load verification: top-level keys ["id","name","description","data"]; nodes 7; edges 6. No truncation markers in the export or any embedded source string. Secret-pattern scan passed.
+All four exports passed the same check: F1 4/3, F2 7/6, F3 6/6, F4 12/11. The artifact repair is committed separately before the F4 feature commit.
+
