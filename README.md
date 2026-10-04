@@ -8,7 +8,7 @@
 * **IBM Bob (Conversational Front-End)**: Manages patient and caregiver dialogue, collects daily symptom reports, and provides empathetic interactive communication.
 * **Langflow (Backend Workflow Orchestration)**: Handles structured data extraction, deterministic heuristic risk tiering, care plan drafting, human-in-the-loop clinical review gates, and grounded guideline retrieval.
 
-> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. **F1 and F2 PASSED** their synthetic acceptance cases on operator-authorized `gemini-3.5-flash-lite` at temperature 0. F1 yields valid JSON 7/HIGH with complete episode; F2 yields 6/HIGH monitoring, MEDIUM→HIGH plan review, and exact red-flag escalation with the scorer structurally bypassed. REST message/trace session isolation was proven. **STOP after F2**; F3–F5 remain unstarted.
+> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. **F1 and F2 PASSED** their synthetic acceptance cases on operator-authorized `gemini-3.5-flash-lite` at temperature 0 (commits `d41a180`, `ca3ea87`). F1 yields valid JSON 7/HIGH with complete episode; F2 yields 6/HIGH monitoring, MEDIUM→HIGH plan review, and exact red-flag escalation with the scorer structurally bypassed. REST message/trace session isolation was proven. On 2026-10-04, the operator issued the STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut`, authorizing F3 and F4 through STOP 2. **F3 and F4 are IN PROGRESS**; F5 remains UNSTARTED.
 
 ### Clinical Disclaimer & Synthetic Data Mandate
 * **SYNTHETIC DEMO ONLY**: All clinical data, patient profiles, and workflow artifacts are synthetic demonstrations.
@@ -44,7 +44,7 @@
 * [`protocols/medication-safety.txt`](protocols/medication-safety.txt) (391 words): Generic Indonesian medication adherence draft emphasizing schedule consistency, safe storage, and strict prohibition of unapproved dosage changes. Strictly pending clinician review.
 * [`reports/langflow-discovery.txt`](reports/langflow-discovery.txt): Environment discovery report documenting connected Langflow MCP tools, component registry, and inventory of 35 existing server flows.
 * [`reports/langflow-discovery-transcript.txt`](reports/langflow-discovery-transcript.txt): Tool schema extractions and discovery transcript.
-* [`reports/register_discharge_summary-test.txt`](reports/register_discharge_summary-test.txt): Factual F1 repair transcript, verbatim mutation/validation results, provider-404 trace, reference-name evidence, and explicitly local scorer smoke outputs.
+* [`reports/register_discharge_summary-test.txt`](reports/register_discharge_summary-test.txt): F1 repair history, verbatim mutation/validation results, gemini-2.5-flash 404 blocker, and PASSED gemini-3.5-flash-lite fixture run (7/HIGH) with MCP vs REST session evidence.
 * [`exports/register_discharge_summary.json`](exports/register_discharge_summary.json): Exact raw export of F1 flow graph (nodes, edges, config, and source).
 * [`reports/record_patient_checkin-test.txt`](reports/record_patient_checkin-test.txt): Full actual F2 construction/registration transcript, isolated REST tests, exact outputs, and scorer-bypass evidence.
 * [`exports/record_patient_checkin.json`](exports/record_patient_checkin.json): Exact raw redacted F2 flow export.
@@ -57,8 +57,8 @@
 |---|---|---|---|
 | **F1** | `register_discharge_summary` | Ingests discharge summary text, extracts clinical episode parameters via LLM, and calculates a deterministic DEMO risk tier (LOW / MEDIUM / HIGH). **NOT a calibrated 30-day prediction model**. | **PASSED — fixture 7/HIGH; isolated REST session** |
 | **F2** | `record_patient_checkin` | Ingests daily check-in text, detects 5 red-flag categories (immediate escalation), tracks non-flag symptom trajectory / adherence, calculates next check-in interval, and triggers plan review on tier changes. | **PASSED — all 3 isolated cases; structural bypass proven** |
-| **F3** | `draft_followup_plan` | Generates a JSON draft follow-up care plan in Bahasa Indonesia plus SATUSEHAT-shaped FHIR resources under key `satuseshat` (`careplan`, `servicerequest`, `task`). | **UNSTARTED** |
-| **F4** | `review_care_plan` | Human-in-the-loop review via `HumanInput`, SQLite persistence (`approved_plans`, `audit_log`), and plan routing (`Approve`, `Request Changes`, `Escalate`). | **UNSTARTED** |
+| **F3** | `draft_followup_plan` | Generates a JSON draft follow-up care plan in Bahasa Indonesia plus SATUSEHAT-shaped FHIR resources under key `satuseshat` (`careplan`, `servicerequest`, `task`). | **IN PROGRESS** |
+| **F4** | `review_care_plan` | Human-in-the-loop review via `HumanInput`, SQLite persistence (`approved_plans`, `audit_log`), and plan routing (`Approve`, `Request Changes`, `Escalate`). | **IN PROGRESS** |
 | **F5** | `answer_care_questions` | Grounded patient Q&A over APPROVED care plan and protocol chunks via Chroma vector retrieval with exact embedding model `models/gemini-embedding-001`, strict out-of-scope refusal, and red-flag bypass. | **UNSTARTED** |
 
 > **Flow ID Notice**: Current instance F1 ID is `458d7c88-812b-4cb2-bc3f-ccccf809ed1a`. It pre-existed this repair and was updated in place; no flow was recreated or duplicated. Original-instance ID `e1267720-b42b-4bcf-aff5-1792a4871df1` is absent from the current inventory. Unrelated flows were not modified.
@@ -126,16 +126,16 @@ On original ID `e1267720-b42b-4bcf-aff5-1792a4871df1`, two validations returned 
 
 ---
 
-## 5. Specification for Remaining Flows (F2–F5) & Operator Stop Phrases
+## 5. Flow Specifications & Operator Stop Phrases
 
 ### 5.1 Operating Discipline & Multi-Agent Stop Phrases
 * **Per-Flow Lifecycle**: discover $\rightarrow$ one-shot create $\rightarrow$ validate $\rightarrow$ real run $\rightarrow$ `notify_done` $\rightarrow$ redacted export + actual transcript $\rightarrow$ atomic commit.
 * **Error Discipline**: Two identical consecutive errors $\rightarrow$ **STOP immediately**.
 * **Safety Mandates**: Preserve other user flows on the server; never store or commit literal API secrets.
-* **Authorized Scope**: Operator authorized F1/F2 model `gemini-3.5-flash-lite` at temperature 0 on 2026-10-03. Complete F2 only after F1 passes, then STOP; F3 must not begin.
+* **Authorized Scope**: F1 and F2 passed on operator-authorized `gemini-3.5-flash-lite` at temperature 0 (commits `d41a180`, `ca3ea87`). On 2026-10-04, the operator issued the STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut`, authorizing F3 and F4 through STOP 2. F3 and F4 are in progress; F5 must not begin until STOP 2 is completed and authorized.
 
 **Exact Stop & Resume Phrases (Do NOT invent dialogue)**:
-1. **STOP1** (after completing F1 and F2): Resume upon operator command:
+1. **STOP1** (after completing F1 and F2): Completed and resumed on 2026-10-04 upon operator command:
    ```text
    checkpoint-1-mvp-intake selesai, lanjut
    ```
@@ -150,7 +150,7 @@ On original ID `e1267720-b42b-4bcf-aff5-1792a4871df1`, two validations returned 
 1. **F1 Accepted**: Preserve model `gemini-3.5-flash-lite`, temperature 0, eight-field extraction/scorer contract, and existing named credential reference. The old `gemini-2.5-flash` 404 is resolved history, not a current blocker.
 2. **F2 Accepted**: Preserve the native structural router, genuine deterministic scorer, exact escalation formatter, typed baseline/patient tweaks, and three recorded synthetic acceptance cases.
 3. **Sessions & Audit**: Use the approved REST `/api/v1/run/{flow_id}` with explicit top-level `session_id: "demo-<patient_id>"`; component tweaks alone are ineffective on this instance. Trace writes are asynchronous: match by actual session/run timestamp, not the first immediately returned latest trace.
-4. **STOP Now**: F1/F2 exports and actual transcripts are committed. Await operator instruction; never start F3 in this workstream. Model choices for F3/F5 remain pending.
+4. **STOP 1 Passed & F3/F4 In Progress**: Operator issued the STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut` on 2026-10-04, authorizing work on F3 and F4 through STOP 2. `gemini-2.5-flash` returns provider 404 on this account; F3 will use `gemini-3.5-flash-lite` at temperature 0.2 (extending the operator's F1/F2 model choice; F3 spec temperature 0.2 unchanged). F5 generator model remains pending. Work must halt at STOP 2 before starting F5.
 
 ---
 
@@ -222,8 +222,9 @@ Matched non-red traces are `3fba39ca-555b-40d5-81e6-6fc5ad7a6f46` (high) and `60
 ---
 
 ### 5.4 Flow F3: `draft_followup_plan` Specifications
-* **LLM Engine**: Gemini `gemini-2.5-flash`, `temperature: 0.2`.
-* **Model choice pending**: The 2026-10-03 replacement decision applies only to F1/F2; this unstarted F3 specification is retained pending operator confirmation.
+* **LLM Engine**: Gemini `gemini-3.5-flash-lite`, `temperature: 0.2`.
+* **Model Selection Note**: `gemini-2.5-flash` returns provider 404 on this account. F3 will use `gemini-3.5-flash-lite` at temperature 0.2, extending the operator's F1/F2 model choice while keeping the F3 spec temperature 0.2 unchanged.
+* **Implementation Status**: **IN PROGRESS** (authorized via STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut` on 2026-10-04).
 * **Care Intensity Parameters (Demo Guidelines)**:
   * **HIGH**: Nurse phone call within 24 hours + daily check-ins.
   * **MEDIUM**: Check-in every 2 days + outpatient clinic visit in 7 days.
@@ -240,6 +241,7 @@ Matched non-red traces are `3fba39ca-555b-40d5-81e6-6fc5ad7a6f46` (high) and `60
 ---
 
 ### 5.5 Flow F4: `review_care_plan` Specifications
+* **Implementation Status**: **IN PROGRESS** (authorized via STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut` on 2026-10-04).
 * **Human-in-the-Loop Component**: `HumanInput` (confirmed PRESENT on instance).
 * **Configured Actions**: `Approve`, `Request Changes`, `Escalate`, fallback `Escalate`, timeout 300s (custom action strings and timeout currently untested on this runtime).
 * **Action Logic**:
@@ -255,8 +257,8 @@ Matched non-red traces are `3fba39ca-555b-40d5-81e6-6fc5ad7a6f46` (high) and `60
 ### 5.6 Flow F5: `answer_care_questions` Specifications
 * **Vector Store & Embeddings**: Local Chroma vector store with EXACT embedding model `models/gemini-embedding-001` (no alternate or fallback embedding models).
 * **Retrieval Scope**: Top-4 retrieved chunks scoped strictly to the patient's APPROVED care plan and protocol documents.
-* **Generator**: Gemini `gemini-2.5-flash`, `temperature: 0.2` generating answers in Bahasa Indonesia with citations to source chunks.
-* **Model choice pending**: The 2026-10-03 replacement decision applies only to F1/F2; this unstarted F5 specification is retained pending operator confirmation.
+* **Generator**: Model choice pending (`gemini-2.5-flash` returns provider 404 on this account; generator model pending operator confirmation), `temperature: 0.2` generating answers in Bahasa Indonesia with citations to source chunks.
+* **Implementation Status**: **UNSTARTED** (awaits STOP 2 completion and operator authorization).
 * **Out-of-Scope Refusal Guard**: If query falls outside retrieved context, output EXACT refusal string:
   ```text
   Maaf, pertanyaan itu di luar cakupan rencana Anda. Silakan tanyakan ke perawat Anda atau hubungi hotline.
@@ -299,5 +301,5 @@ The MCP schema has no top-level `session_id`. Actual `run_flow` with ChatInput/C
 5. F2 high and medium outputs: **6/HIGH** with -1, then **6/HIGH** with `trigger_plan_review` and `red_flag: false`.
 6. F2 severe case: exact action/reason JSON, `demo-chf-redflag` trace showing formatter **without scorer**, and unchanged prior scorer build timestamp.
 
-### Future Flows — Unstarted, Do Not Begin Now
+### Subsequent Flows (F3–F5) — Screenshot Capture Plan
 F3 SATUSEHAT-shaped draft output, F4 human-review/SQLite persistence, and F5 grounded Q&A screenshots are future deliverables only. No current screenshots or successful runs are claimed for those flows.

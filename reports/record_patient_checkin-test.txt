@@ -685,15 +685,7 @@ CALL mcp__langflow_list_flows
 ARGS (exact submitted JSON):
 {"query": "checkin"}
 RESULT (VERBATIM tool text):
-{
-  "id": "9b6cc0a6-7006-4f07-86e9-f47b61c9b462",
-  "name": "record_patient_checkin",
-  "description": "SynCare synthetic-only check-in extraction, structural red-flag scorer bypass, deterministic demo-heuristic-v1; not clinically validated.",
-  "graph": "ChatInput -> ext:google:GoogleGenerativeAIComponent@official, ext:google:GoogleGenerativeAIComponent@official -> ConditionalRouter, ConditionalRouter -> CustomComponent #1, ConditionalRouter -> CustomComponent #2, CustomComponent #1 -> ChatOutput #1, CustomComponent #2 -> ChatOutput #2",
-  "spec_summary": "name: record_patient_checkin\n\ncomponents:\n  ChatInput-IW816: ChatInput\n  ext:google:GoogleGenerativeAIComponent@official-3KvJe: ext:google:GoogleGenerativeAIComponent@official\n  ConditionalRouter-uSU0C: ConditionalRouter\n  CustomComponent-0WfNa: CustomComponent\n  CustomComponent-Q5Slm: CustomComponent\n  ChatOutput-pTVwm: ChatOutput\n  ChatOutput-BdCAF: ChatOutput\n\nconnections:\n  ChatInput-IW816.message -> ext:google:GoogleGenerativeAIComponent@official-3KvJe.input_value\n  ext:google:GoogleGenerativeAIComponent@official-3KvJe.text_output -> ConditionalRouter-uSU0C.input_text\n  ConditionalRouter-uSU0C.false_result -> CustomComponent-0WfNa.input_value\n  ConditionalRouter-uSU0C.true_result -> CustomComponent-Q5Slm.input_value\n  CustomComponent-0WfNa.output -> ChatOutput-pTVwm.input_value\n  CustomComponent-Q5Slm.output -> ChatOutput-BdCAF.input_value",
-  "node_count": 7,
-  "edge_count": 6
-}```json
+```json
 {
   "result": [
     {
