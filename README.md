@@ -8,7 +8,7 @@
 * **IBM Bob (Conversational Front-End)**: Manages patient and caregiver dialogue, collects daily symptom reports, and provides empathetic interactive communication.
 * **Langflow (Backend Workflow Orchestration)**: Handles structured data extraction, deterministic heuristic risk tiering, care plan drafting, human-in-the-loop clinical review gates, and grounded guideline retrieval.
 
-> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. **F1–F3 PASSED** their synthetic acceptance cases. F1 yields 7/HIGH with complete episode; F2 proves tier adjustment and structural red-flag bypass; F3 yields a guarded Indonesian `satuseshat` draft and fail-closed missing-facts JSON. On 2026-10-04 the operator authorized F3/F4 through STOP 2. **F4 remains IN PROGRESS**; F5 remains UNSTARTED.
+> **Current Implementation Status**: The planned architecture is **NOT functioning end-to-end today**. **F1–F4 PASSED** their synthetic acceptance cases. F1 yields 7/HIGH with complete episode; F2 proves tier adjustment and structural red-flag bypass; F3 yields a guarded Indonesian `satuseshat` draft and fail-closed missing-facts JSON; F4 proves actual human pause/resume, approve-only SQLite persistence, escalation, and material nonclinical critique-driven redrafting. **STOP 2 reached**; F5 remains UNSTARTED and requires operator authorization.
 
 ### Clinical Disclaimer & Synthetic Data Mandate
 * **SYNTHETIC DEMO ONLY**: All clinical data, patient profiles, and workflow artifacts are synthetic demonstrations.
@@ -26,7 +26,8 @@
 ├── exports/
 │   ├── register_discharge_summary.json       # Verbatim redacted F1 export (4 nodes, 3 edges)
 │   ├── record_patient_checkin.json           # Verbatim redacted F2 export (7 nodes, 6 edges)
-│   └── draft_followup_plan.json              # Verbatim redacted F3 export (6 nodes, 6 edges)
+│   ├── draft_followup_plan.json              # Verbatim redacted F3 export (6 nodes, 6 edges)
+│   └── review_care_plan.json                 # Verbatim F4 export (12 nodes, 11 edges)
 ├── fixtures/
 │   ├── discharge-chf-high.txt                # Synthetic Indonesian CHF discharge summary text
 │   ├── f3-plan-input-chf-high.json           # Actual F1 JSON plus synthetic supplied scheduling facts
@@ -39,7 +40,8 @@
 │   ├── langflow-discovery-transcript.txt     # Raw and summarized tool schemas & discovery transcript
 │   ├── register_discharge_summary-test.txt   # F1 history and actual passed fixture/session evidence
 │   ├── record_patient_checkin-test.txt       # F2 full actual transcript, three runs, bypass proof
-│   └── draft_followup_plan-test.txt          # F3 actual transcript, two isolated runs, guardrail proof
+│   ├── draft_followup_plan-test.txt          # F3 actual transcript, two isolated runs, guardrail proof
+│   └── review_care_plan-test.txt             # F4 pause/resume, per-run SQLite rows/counts, critique revision
 └── README.md                                 # Full agent handoff documentation
 ```
 
@@ -54,6 +56,8 @@
 * [`exports/record_patient_checkin.json`](exports/record_patient_checkin.json): Exact raw redacted F2 flow export.
 * [`reports/draft_followup_plan-test.txt`](reports/draft_followup_plan-test.txt): Actual F3 mutations, validation, high/missing-facts outputs, source-input provenance, and session/guardrail evidence.
 * [`exports/draft_followup_plan.json`](exports/draft_followup_plan.json): Exact unmodified MCP export of the six-node guarded drafting flow.
+* [`reports/review_care_plan-test.txt`](reports/review_care_plan-test.txt): Actual F4 pause/resume streams, all three human actions, material critique response, initial failed-run evidence, and untruncated read-only SQLite row/count queries.
+* [`exports/review_care_plan.json`](exports/review_care_plan.json): Exact unmodified MCP export of the twelve-node human review flow. The SQLite database remains outside the repository and is not committed.
 
 ---
 
@@ -64,7 +68,7 @@
 | **F1** | `register_discharge_summary` | Ingests discharge summary text, extracts clinical episode parameters via LLM, and calculates a deterministic DEMO risk tier (LOW / MEDIUM / HIGH). **NOT a calibrated 30-day prediction model**. | **PASSED — fixture 7/HIGH; isolated REST session** |
 | **F2** | `record_patient_checkin` | Ingests daily check-in text, detects 5 red-flag categories (immediate escalation), tracks non-flag symptom trajectory / adherence, calculates next check-in interval, and triggers plan review on tier changes. | **PASSED — all 3 isolated cases; structural bypass proven** |
 | **F3** | `draft_followup_plan` | Generates a guarded Indonesian JSON draft with `satuseshat` (`careplan`, `servicerequest`, `task`) and mandatory human-approval status; fails closed on missing facts. | **PASSED — HIGH draft and missing-facts cases** |
-| **F4** | `review_care_plan` | Human-in-the-loop review via `HumanInput`, SQLite persistence (`approved_plans`, `audit_log`), and plan routing (`Approve`, `Request Changes`, `Escalate`). | **IN PROGRESS** |
+| **F4** | `review_care_plan` | Human-in-the-loop review via `HumanInput`, approve-only SQLite persistence (`approved_plans`, `audit_log`), and routing (`Approve`, `Request Changes`, `Escalate`). | **PASSED — actual v2 pause/resume; all 3 human actions; STOP 2 reached** |
 | **F5** | `answer_care_questions` | Grounded patient Q&A over APPROVED care plan and protocol chunks via Chroma vector retrieval with exact embedding model `models/gemini-embedding-001`, strict out-of-scope refusal, and red-flag bypass. | **UNSTARTED** |
 
 > **Flow ID Notice**: Current instance F1 ID is `458d7c88-812b-4cb2-bc3f-ccccf809ed1a`. It pre-existed this repair and was updated in place; no flow was recreated or duplicated. Original-instance ID `e1267720-b42b-4bcf-aff5-1792a4871df1` is absent from the current inventory. Unrelated flows were not modified.
@@ -261,16 +265,36 @@ Both response/message/trace session IDs matched the supplied REST top-level sess
 ---
 
 ### 5.5 Flow F4: `review_care_plan` Specifications
-* **Implementation Status**: **IN PROGRESS** (authorized via STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut` on 2026-10-04).
-* **Human-in-the-Loop Component**: `HumanInput` (confirmed PRESENT on instance).
-* **Configured Actions**: `Approve`, `Request Changes`, `Escalate`, fallback `Escalate`, timeout 300s (custom action strings and timeout currently untested on this runtime).
+* **Implementation Status**: **PASSED**, flow `83d39915-9176-4cbd-aac5-74dd00461bf4`; STOP 2 complete. Authorized via STOP 1 resume phrase `checkpoint-1-mvp-intake selesai, lanjut` on 2026-10-04.
+* **Human-in-the-Loop Component**: Native `HumanInput`, with actual observed `human_input_required` pause and resumed human decisions.
+* **Configured Actions**: `Approve`, `Request Changes`, `Escalate`; native `fallback` routes to its own Escalate handler. Timeout is `5 Minutes` = **300s**, confirmed in each pause event. Timeout rerouting is evaluated on a late response; automatic escalation exactly at 300s is not claimed. Expiry/fallback execution was not acceptance-tested.
 * **Action Logic**:
   * `Approve`: Writes approved plan record to SQLite table `approved_plans(plan_json, approved_at, reviewer_note)` + outputs confirmation message in Bahasa Indonesia.
-  * `Request Changes`: Loops back to plan drafting with reviewer critique notes.
+  * `Request Changes`: Audits the actual critique, passes preserved factual source input plus `reviewer_note` to native `RunFlow` invoking the existing F3, and returns a materially revised **DRAFT**. This is one real redraft, not automatic approval or a cyclic graph edge; resubmit the returned draft to F4 for a new human decision.
   * `Escalate`: Emits escalation payload: `{"action": "escalate_to_clinician", "plan_json": {...}}`.
 * **Audit Trail**: All three actions append rows to SQLite table `audit_log(action, actor, timestamp, payload)`.
 * **Integrity Invariant**: **NOTHING** is written to `approved_plans` prior to explicit human approval.
-* **Acceptance Tests**: Test pause event verbatim, verify `Approve` with SQLite persistence; test second scenario triggering `Escalate`.
+* **Acceptance Tests**: All three actions completed through the v2 background API, with actual pause/resume, isolated sessions, per-run SQLite counts, and material nonclinical critique response.
+
+#### F4 Implemented Gate, Persistence & Actual Acceptance
+Input is the complete actual guarded F3 HIGH ChatOutput JSON. The intake component validates its DRAFT status, label, preserved source input and resources, and initializes empty tables only. Each action handler reads the real injected `graph.human_input_decisions[HumanInput-Gy29k:<run_id>]` dictionary, including `actor` and `reviewer_note`. Missing/mismatched decisions refuse all inserts. Approve writes its approved plan and audit row in one SQLite transaction; all other actions write audit rows only. Database path: **`C:/Users/Frxsk/langflow/syncare-review.sqlite3`**, outside this repository. Schema is `approved_plans(plan_json TEXT, approved_at TEXT, reviewer_note TEXT)` and `audit_log(action TEXT, actor TEXT, timestamp TEXT, payload TEXT)`.
+
+Every gate branch has an independent handler/output tail. An initial shared Escalate/fallback tail caused an inactive handler to run after a genuine Approve and fail its decision guard. Its authorized approved/audit rows are retained, not deleted. The final topology separates the fallback tail; final counts below explicitly include that earlier authorized row.
+
+| Final case | Job / trace ID | Session | Approved before → paused → after | Audit before → paused → after |
+|---|---|---|---|---|
+| Approve | `ba5111b9-4a71-4b2e-b300-ac510e3ca309` | `demo-chf-high` | `1 → 1 → 2` | `1 → 1 → 2` |
+| Escalate | `a7de048a-8fe0-4630-8e99-5cf7340714de` | `demo-chf-escalate` | `2 → 2 → 2` | `2 → 2 → 3` |
+| Request Changes | `206617e3-0488-4b7e-9a3e-10fdb7e64259` | `demo-chf-request-changes` | `2 → 2 → 2` | `3 → 3 → 4` |
+
+All accepted response/message/trace sessions match those supplied sessions. Approve emits Indonesian persistence confirmation; Escalate emits exactly `{"action":"escalate_to_clinician","plan_json":<actual draft>}`. The Request Changes critique asks for the clearer opening **“Ringkasan rencana pemantauan.”** instead of **“Draf tindak lanjut.”**. The actual nested F3/Gemini run makes exactly that material narrative change, keeps the remaining text/resources and F1 facts unchanged, remains DRAFT, and never inserts an approved plan. This is not merely attaching a note. The existing safe alternate narrative permits this specific clarity change, so F3 code/prompt needed no modification; unrestricted critique-driven rewriting is not claimed. Separately, F2/F3 exports originally contained tool-presentation elision and were invalid JSON. Their full original raw exports were restored without runtime changes, with explicit report corrections and a separate artifact-fix commit before the F4 feature commit. All four final exports parse, have expected counts, and contain no embedded-source elision.
+
+The actual nested F3 revision trace is `3fce0dc6-8901-41a4-bb45-d05f6174f0f7`, session `demo-chf-request-changes`, status `ok`; its executed spans include the fact gate, **Google Generative AI**, deterministic draft guard, and ChatOutput. This independently confirms genuine redrafting rather than merely echoing reviewer notes.
+
+**Execution transport**: `POST /api/v2/workflows` with `mode:"background"` and top-level `session_id`; read `/api/v2/workflows/<job_id>/events`, then resume with `POST /api/v2/workflows/<job_id>/resume` and `{"request_id":<actual pause request>,"decision":{"action_id":"approve|request_changes|escalate","actor":<synthetic reviewer>,"reviewer_note":<actual critique>}}`. Native RunFlow's session was explicitly configured to the revision session; future callers should supply `tweaks["RunFlow-m412w"]["session_id"]` for their own child redraft session.
+
+**Validation limitation**: The one MCP `validate_flow` call returned `{"valid":false,"component_count":3,"errors":[{"component_id":"flow","error":"Build error"}]}`. It uses v1 direct build, which does not arm the durable background pause seam; the corresponding trace records an empty-placeholder JSON parsing error. Installed `langflow/api/build.py:589-595`, `lfx/graph/graph/base.py:931-940`, and `lfx/mcp/server.py:1235-1269` explain the transport limitation. v1 `run_flow` also rejects HITL outright. No repeated MCP validation was performed: the three successful v2 background builds, real pauses and completed resumes are the acceptance evidence. Full raw output, source excerpts, retained failed-run rows and final before/after queries are in the F4 transcript.
+
 
 ---
 
