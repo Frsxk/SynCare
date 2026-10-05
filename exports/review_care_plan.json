@@ -1,11 +1,11 @@
 {
-  "id": "83d39915-9176-4cbd-aac5-74dd00461bf4",
+  "id": "b9413d2e-cb01-43e0-b83b-d4b1bb90a3a3",
   "name": "review_care_plan",
   "description": "SynCare synthetic human review gate, approve-only SQLite persistence, audit for every action and F3 redrafting.",
   "data": {
     "nodes": [
       {
-        "id": "ChatInput-lsdBO",
+        "id": "ChatInput-uSAbT",
         "type": "genericNode",
         "position": {
           "x": 0,
@@ -13,7 +13,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatInput-lsdBO",
+          "id": "ChatInput-uSAbT",
           "type": "ChatInput",
           "node": {
             "base_classes": [
@@ -305,7 +305,7 @@
         }
       },
       {
-        "id": "CustomComponent-eIQYv",
+        "id": "CustomComponent-D0sGt",
         "type": "genericNode",
         "position": {
           "x": 480,
@@ -313,7 +313,7 @@
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-eIQYv",
+          "id": "CustomComponent-D0sGt",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -348,7 +348,7 @@
                 "placeholder": "",
                 "show": true,
                 "name": "db_path",
-                "value": "C:\\Users\\Frxsk\\langflow\\syncare-review.sqlite3",
+                "value": "/home/frxskie/langflow/syncare-review.sqlite3",
                 "display_name": "Review SQLite Path",
                 "advanced": true,
                 "api_editable": false,
@@ -406,7 +406,7 @@
                 "selected": "Message",
                 "name": "output",
                 "hidden": null,
-                "display_name": "Human Review Envelope",
+                "display_name": "Output",
                 "method": "prepare_review",
                 "value": "__UNDEFINED__",
                 "cache": true,
@@ -444,7 +444,7 @@
         }
       },
       {
-        "id": "HumanInput-Gy29k",
+        "id": "HumanInput-IvOz5",
         "type": "genericNode",
         "position": {
           "x": 960,
@@ -452,7 +452,7 @@
         },
         "selected": false,
         "data": {
-          "id": "HumanInput-Gy29k",
+          "id": "HumanInput-IvOz5",
           "type": "HumanInput",
           "node": {
             "template": {
@@ -583,7 +583,14 @@
                   "value": 5,
                   "unit": "Minutes"
                 }
-              }
+              },
+              "_frontend_node_flow_id": {
+                "value": "b9413d2e-cb01-43e0-b83b-d4b1bb90a3a3"
+              },
+              "_frontend_node_folder_id": {
+                "value": "30c47a4b-2988-4a0d-8d67-3d90ce3cc4dc"
+              },
+              "is_refresh": false
             },
             "description": "Pause the flow for a human-in-the-loop (HITL) decision and route on the chosen action.",
             "icon": "HumanInput",
@@ -699,13 +706,14 @@
                 ]
               }
             },
-            "tool_mode": false
+            "tool_mode": false,
+            "last_updated": "2026-10-05T07:14:28.282Z"
           },
           "showNode": true
         }
       },
       {
-        "id": "CustomComponent-pHsmC",
+        "id": "CustomComponent-SOm3j",
         "type": "genericNode",
         "position": {
           "x": 1440,
@@ -713,7 +721,7 @@
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-pHsmC",
+          "id": "CustomComponent-SOm3j",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -770,7 +778,7 @@
                 "placeholder": "",
                 "show": true,
                 "name": "gate_id",
-                "value": "HumanInput-Gy29k",
+                "value": "HumanInput-IvOz5",
                 "display_name": "HumanInput Node ID",
                 "advanced": true,
                 "api_editable": false,
@@ -828,7 +836,7 @@
                 "selected": "Message",
                 "name": "output",
                 "hidden": null,
-                "display_name": "Review Result or Revision Input",
+                "display_name": "Output",
                 "method": "record_decision",
                 "value": "__UNDEFINED__",
                 "cache": true,
@@ -867,7 +875,7 @@
         }
       },
       {
-        "id": "CustomComponent-jADov",
+        "id": "CustomComponent-juo0I",
         "type": "genericNode",
         "position": {
           "x": 1440,
@@ -875,7 +883,7 @@
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-jADov",
+          "id": "CustomComponent-juo0I",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -932,7 +940,7 @@
                 "placeholder": "",
                 "show": true,
                 "name": "gate_id",
-                "value": "HumanInput-Gy29k",
+                "value": "HumanInput-IvOz5",
                 "display_name": "HumanInput Node ID",
                 "advanced": true,
                 "api_editable": false,
@@ -990,7 +998,7 @@
                 "selected": "Message",
                 "name": "output",
                 "hidden": null,
-                "display_name": "Review Result or Revision Input",
+                "display_name": "Output",
                 "method": "record_decision",
                 "value": "__UNDEFINED__",
                 "cache": true,
@@ -1029,7 +1037,7 @@
         }
       },
       {
-        "id": "CustomComponent-eYDR9",
+        "id": "CustomComponent-sdoOh",
         "type": "genericNode",
         "position": {
           "x": 1440,
@@ -1037,7 +1045,7 @@
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-eYDR9",
+          "id": "CustomComponent-sdoOh",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -1094,7 +1102,7 @@
                 "placeholder": "",
                 "show": true,
                 "name": "gate_id",
-                "value": "HumanInput-Gy29k",
+                "value": "HumanInput-IvOz5",
                 "display_name": "HumanInput Node ID",
                 "advanced": true,
                 "api_editable": false,
@@ -1152,7 +1160,7 @@
                 "selected": "Message",
                 "name": "output",
                 "hidden": null,
-                "display_name": "Review Result or Revision Input",
+                "display_name": "Output",
                 "method": "record_decision",
                 "value": "__UNDEFINED__",
                 "cache": true,
@@ -1191,7 +1199,7 @@
         }
       },
       {
-        "id": "RunFlow-m412w",
+        "id": "RunFlow-rGQR7",
         "type": "genericNode",
         "position": {
           "x": 1920,
@@ -1199,7 +1207,7 @@
         },
         "selected": false,
         "data": {
-          "id": "RunFlow-m412w",
+          "id": "RunFlow-rGQR7",
           "type": "RunFlow",
           "node": {
             "template": {
@@ -1225,25 +1233,6 @@
                 "type": "bool",
                 "value": false
               },
-              "code": {
-                "advanced": true,
-                "api_editable": false,
-                "dynamic": true,
-                "fileTypes": [],
-                "file_path": "",
-                "info": "",
-                "list": false,
-                "load_from_db": false,
-                "multiline": true,
-                "name": "code",
-                "password": false,
-                "placeholder": "",
-                "required": true,
-                "show": true,
-                "title_case": false,
-                "type": "code",
-                "value": "from copy import deepcopy\nfrom datetime import datetime\nfrom typing import Any\n\nfrom lfx.base.tools.run_flow import RunFlowBaseComponent\nfrom lfx.log.logger import logger\nfrom lfx.schema.data import Data\nfrom lfx.schema.dotdict import dotdict\n\n\nclass RunFlowComponent(RunFlowBaseComponent):\n    display_name = \"Run Flow\"\n    description = (\n        \"Executes another flow from within the same project. Can also be used as a tool for agents.\"\n        \" \\n **Select a Flow to use the tool mode**\"\n    )\n    documentation: str = \"https://docs.langflow.org/run-flow\"\n    beta = True\n    name = \"RunFlow\"\n    icon = \"Workflow\"\n\n    # Keep the concrete class templates detached from the base-class templates;\n    # Component.__init__ still makes the per-instance copies used at runtime.\n    inputs = deepcopy(RunFlowBaseComponent.get_base_inputs())\n    outputs = deepcopy(RunFlowBaseComponent.get_base_outputs())\n\n    async def update_build_config(\n        self,\n        build_config: dotdict,\n        field_value: Any,\n        field_name: str | None = None,\n    ):\n        missing_keys = [key for key in self.default_keys if key not in build_config]\n        for key in missing_keys:  # TODO: create a defaults dict to avoid hardcoding the defaults here\n            if key == \"flow_name_selected\":\n                build_config[key] = {\"options\": [], \"options_metadata\": [], \"value\": None}\n            elif key == \"flow_id_selected\":\n                build_config[key] = {\"value\": None}\n            elif key == \"cache_flow\":\n                build_config[key] = {\"value\": False}\n            else:\n                build_config[key] = {}\n        if field_name == \"flow_name_selected\" and (build_config.get(\"is_refresh\", False) or field_value is None):\n            # refresh button was clicked or componented was initialized, so list the flows\n            options: list[str] = await self.alist_flows_by_flow_folder()\n            build_config[\"flow_name_selected\"][\"options\"] = [flow.data[\"name\"] for flow in options]\n            build_config[\"flow_name_selected\"][\"options_metadata\"] = []\n            for flow in options:\n                # populate options_metadata\n                build_config[\"flow_name_selected\"][\"options_metadata\"].append(\n                    {\"id\": flow.data[\"id\"], \"updated_at\": flow.data[\"updated_at\"]}\n                )\n                # update selected flow if it is stale\n                if str(flow.data[\"id\"]) == self.flow_id_selected:\n                    await self.check_and_update_stale_flow(flow, build_config)\n        elif field_name in {\"flow_name_selected\", \"flow_id_selected\"} and field_value is not None:\n            # flow was selected by name or id, so get the flow and update the bcfg\n            try:\n                # derive flow id if the field_name is flow_name_selected\n                build_config[\"flow_id_selected\"][\"value\"] = (\n                    self.get_selected_flow_meta(build_config, \"id\") or build_config[\"flow_id_selected\"][\"value\"]\n                )\n                updated_at = self.get_selected_flow_meta(build_config, \"updated_at\")\n                await self.load_graph_and_update_cfg(\n                    build_config, build_config[\"flow_id_selected\"][\"value\"], updated_at\n                )\n            except Exception as e:\n                msg = f\"Error building graph for flow {field_value}\"\n                await logger.aexception(msg)\n                raise RuntimeError(msg) from e\n\n        return build_config\n\n    def get_selected_flow_meta(self, build_config: dotdict, field: str) -> dict:\n        \"\"\"Get the selected flow's metadata from the build config.\"\"\"\n        return build_config.get(\"flow_name_selected\", {}).get(\"selected_metadata\", {}).get(field)\n\n    async def load_graph_and_update_cfg(\n        self,\n        build_config: dotdict,\n        flow_id: str,\n        updated_at: str | datetime,\n    ) -> None:\n        \"\"\"Load a flow's graph and update the build config.\"\"\"\n        graph = await self.get_graph(\n            flow_id_selected=flow_id,\n            updated_at=self.get_str_isots(updated_at),\n        )\n        self.update_build_config_from_graph(build_config, graph)\n\n    def should_update_stale_flow(self, flow: Data, build_config: dotdict) -> bool:\n        \"\"\"Check if the flow should be updated.\"\"\"\n        return (\n            (updated_at := self.get_str_isots(flow.data[\"updated_at\"]))  # true updated_at date just fetched from db\n            and (stale_at := self.get_selected_flow_meta(build_config, \"updated_at\"))  # outdated date in bcfg\n            and self._parse_timestamp(updated_at) > self._parse_timestamp(stale_at)  # stale flow condition\n        )\n\n    async def check_and_update_stale_flow(self, flow: Data, build_config: dotdict) -> None:\n        \"\"\"Check if the flow should be updated and update it if necessary.\"\"\"\n        # TODO: improve contract/return value\n        if self.should_update_stale_flow(flow, build_config):\n            await self.load_graph_and_update_cfg(\n                build_config,\n                flow.data[\"id\"],\n                flow.data[\"updated_at\"],\n            )\n\n    def get_str_isots(self, date: datetime | str) -> str:\n        \"\"\"Get a string timestamp from a datetime or string.\"\"\"\n        return date.isoformat() if hasattr(date, \"isoformat\") else date\n"
-              },
               "flow_id_selected": {
                 "_input_type": "StrInput",
                 "advanced": false,
@@ -1264,7 +1253,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": "bd4488e6-e8fb-4107-b497-1b5178bc8371"
+                "value": "fb72ad45-b2ac-4979-a34c-c5e2f0725754"
               },
               "flow_name_selected": {
                 "_input_type": "DropdownInput",
@@ -1291,7 +1280,11 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": true,
                 "type": "str",
-                "value": "draft_followup_plan"
+                "value": "draft_followup_plan",
+                "selected_metadata": {
+                  "id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+                  "updated_at": "2026-10-05T06:38:48+00:00"
+                }
               },
               "session_id": {
                 "_input_type": "MessageTextInput",
@@ -1317,9 +1310,35 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": "demo-chf-request-changes"
+                "value": ""
               },
-              "ChatInput-clBqp~input_value": {
+              "code": {
+                "field_type": "code",
+                "required": true,
+                "placeholder": "",
+                "is_list": false,
+                "show": true,
+                "multiline": true,
+                "value": "from copy import deepcopy\nfrom datetime import datetime\nfrom typing import Any\n\nfrom lfx.base.tools.run_flow import RunFlowBaseComponent\nfrom lfx.log.logger import logger\nfrom lfx.schema.data import Data\nfrom lfx.schema.dotdict import dotdict\n\n\nclass RunFlowComponent(RunFlowBaseComponent):\n    display_name = \"Run Flow\"\n    description = (\n        \"Executes another flow from within the same project. Can also be used as a tool for agents.\"\n        \" \\n **Select a Flow to use the tool mode**\"\n    )\n    documentation: str = \"https://docs.langflow.org/run-flow\"\n    beta = True\n    name = \"RunFlow\"\n    icon = \"Workflow\"\n\n    # Keep the concrete class templates detached from the base-class templates;\n    # Component.__init__ still makes the per-instance copies used at runtime.\n    inputs = deepcopy(RunFlowBaseComponent.get_base_inputs())\n    outputs = deepcopy(RunFlowBaseComponent.get_base_outputs())\n\n    async def update_build_config(\n        self,\n        build_config: dotdict,\n        field_value: Any,\n        field_name: str | None = None,\n    ):\n        missing_keys = [key for key in self.default_keys if key not in build_config]\n        for key in missing_keys:  # TODO: create a defaults dict to avoid hardcoding the defaults here\n            if key == \"flow_name_selected\":\n                build_config[key] = {\"options\": [], \"options_metadata\": [], \"value\": None}\n            elif key == \"flow_id_selected\":\n                build_config[key] = {\"value\": None}\n            elif key == \"cache_flow\":\n                build_config[key] = {\"value\": False}\n            else:\n                build_config[key] = {}\n        if field_name == \"flow_name_selected\" and (build_config.get(\"is_refresh\", False) or field_value is None):\n            # refresh button was clicked or componented was initialized, so list the flows\n            options: list[str] = await self.alist_flows_by_flow_folder()\n            build_config[\"flow_name_selected\"][\"options\"] = [flow.data[\"name\"] for flow in options]\n            build_config[\"flow_name_selected\"][\"options_metadata\"] = []\n            for flow in options:\n                # populate options_metadata\n                build_config[\"flow_name_selected\"][\"options_metadata\"].append(\n                    {\"id\": flow.data[\"id\"], \"updated_at\": flow.data[\"updated_at\"]}\n                )\n                # update selected flow if it is stale\n                if str(flow.data[\"id\"]) == self.flow_id_selected:\n                    await self.check_and_update_stale_flow(flow, build_config)\n        elif field_name in {\"flow_name_selected\", \"flow_id_selected\"} and field_value is not None:\n            # flow was selected by name or id, so get the flow and update the bcfg\n            try:\n                # derive flow id if the field_name is flow_name_selected\n                build_config[\"flow_id_selected\"][\"value\"] = (\n                    self.get_selected_flow_meta(build_config, \"id\") or build_config[\"flow_id_selected\"][\"value\"]\n                )\n                updated_at = self.get_selected_flow_meta(build_config, \"updated_at\")\n                await self.load_graph_and_update_cfg(\n                    build_config, build_config[\"flow_id_selected\"][\"value\"], updated_at\n                )\n            except Exception as e:\n                msg = f\"Error building graph for flow {field_value}\"\n                await logger.aexception(msg)\n                raise RuntimeError(msg) from e\n\n        return build_config\n\n    def get_selected_flow_meta(self, build_config: dotdict, field: str) -> dict:\n        \"\"\"Get the selected flow's metadata from the build config.\"\"\"\n        return build_config.get(\"flow_name_selected\", {}).get(\"selected_metadata\", {}).get(field)\n\n    async def load_graph_and_update_cfg(\n        self,\n        build_config: dotdict,\n        flow_id: str,\n        updated_at: str | datetime,\n    ) -> None:\n        \"\"\"Load a flow's graph and update the build config.\"\"\"\n        graph = await self.get_graph(\n            flow_id_selected=flow_id,\n            updated_at=self.get_str_isots(updated_at),\n        )\n        self.update_build_config_from_graph(build_config, graph)\n\n    def should_update_stale_flow(self, flow: Data, build_config: dotdict) -> bool:\n        \"\"\"Check if the flow should be updated.\"\"\"\n        return (\n            (updated_at := self.get_str_isots(flow.data[\"updated_at\"]))  # true updated_at date just fetched from db\n            and (stale_at := self.get_selected_flow_meta(build_config, \"updated_at\"))  # outdated date in bcfg\n            and self._parse_timestamp(updated_at) > self._parse_timestamp(stale_at)  # stale flow condition\n        )\n\n    async def check_and_update_stale_flow(self, flow: Data, build_config: dotdict) -> None:\n        \"\"\"Check if the flow should be updated and update it if necessary.\"\"\"\n        # TODO: improve contract/return value\n        if self.should_update_stale_flow(flow, build_config):\n            await self.load_graph_and_update_cfg(\n                build_config,\n                flow.data[\"id\"],\n                flow.data[\"updated_at\"],\n            )\n\n    def get_str_isots(self, date: datetime | str) -> str:\n        \"\"\"Get a string timestamp from a datetime or string.\"\"\"\n        return date.isoformat() if hasattr(date, \"isoformat\") else date\n",
+                "file_types": [],
+                "file_path": "",
+                "password": false,
+                "options": null,
+                "name": "code",
+                "display_name": "code",
+                "advanced": true,
+                "api_editable": false,
+                "dynamic": true,
+                "info": "",
+                "real_time_refresh": null,
+                "refresh_button": null,
+                "refresh_button_text": null,
+                "range_spec": null,
+                "load_from_db": false,
+                "title_case": false,
+                "type": "code"
+              },
+              "ChatInput-Jk9Uf~input_value": {
                 "_input_type": "MultilineInput",
                 "advanced": false,
                 "ai_enabled": false,
@@ -1335,7 +1354,7 @@
                 "list_add_label": "Add More",
                 "load_from_db": false,
                 "multiline": true,
-                "name": "ChatInput-clBqp~input_value",
+                "name": "ChatInput-Jk9Uf~input_value",
                 "override_skip": false,
                 "password": false,
                 "placeholder": "",
@@ -1349,7 +1368,7 @@
                 "type": "str",
                 "value": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}\n"
               },
-              "ChatInput-clBqp~should_store_message": {
+              "ChatInput-Jk9Uf~should_store_message": {
                 "_input_type": "BoolInput",
                 "advanced": true,
                 "api_editable": false,
@@ -1358,7 +1377,7 @@
                 "info": "Store the message in the history.",
                 "list": false,
                 "list_add_label": "Add More",
-                "name": "ChatInput-clBqp~should_store_message",
+                "name": "ChatInput-Jk9Uf~should_store_message",
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
@@ -1371,7 +1390,7 @@
                 "value": false,
                 "input_types": []
               },
-              "ChatInput-clBqp~sender": {
+              "ChatInput-Jk9Uf~sender": {
                 "_input_type": "DropdownInput",
                 "advanced": true,
                 "api_editable": false,
@@ -1381,7 +1400,7 @@
                 "dynamic": false,
                 "external_options": {},
                 "info": "Type of sender.",
-                "name": "ChatInput-clBqp~sender",
+                "name": "ChatInput-Jk9Uf~sender",
                 "options": [
                   "Machine",
                   "User"
@@ -1402,7 +1421,7 @@
                   "Message"
                 ]
               },
-              "ChatInput-clBqp~sender_name": {
+              "ChatInput-Jk9Uf~sender_name": {
                 "_input_type": "MessageTextInput",
                 "advanced": true,
                 "api_editable": false,
@@ -1415,7 +1434,7 @@
                 "list": false,
                 "list_add_label": "Add More",
                 "load_from_db": false,
-                "name": "ChatInput-clBqp~sender_name",
+                "name": "ChatInput-Jk9Uf~sender_name",
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
@@ -1428,7 +1447,7 @@
                 "type": "str",
                 "value": "User"
               },
-              "ChatInput-clBqp~session_id": {
+              "ChatInput-Jk9Uf~session_id": {
                 "_input_type": "MessageTextInput",
                 "advanced": true,
                 "api_editable": false,
@@ -1441,7 +1460,7 @@
                 "list": false,
                 "list_add_label": "Add More",
                 "load_from_db": false,
-                "name": "ChatInput-clBqp~session_id",
+                "name": "ChatInput-Jk9Uf~session_id",
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
@@ -1454,7 +1473,7 @@
                 "type": "str",
                 "value": ""
               },
-              "ChatInput-clBqp~context_id": {
+              "ChatInput-Jk9Uf~context_id": {
                 "_input_type": "MessageTextInput",
                 "advanced": true,
                 "api_editable": false,
@@ -1467,7 +1486,7 @@
                 "list": false,
                 "list_add_label": "Add More",
                 "load_from_db": false,
-                "name": "ChatInput-clBqp~context_id",
+                "name": "ChatInput-Jk9Uf~context_id",
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
@@ -1480,7 +1499,7 @@
                 "type": "str",
                 "value": ""
               },
-              "ChatInput-clBqp~files": {
+              "ChatInput-Jk9Uf~files": {
                 "_input_type": "FileInput",
                 "advanced": true,
                 "api_editable": false,
@@ -1515,7 +1534,7 @@
                 "info": "Files to be sent with the message.",
                 "list": true,
                 "list_add_label": "Add More",
-                "name": "ChatInput-clBqp~files",
+                "name": "ChatInput-Jk9Uf~files",
                 "override_skip": false,
                 "placeholder": "",
                 "required": false,
@@ -1547,10 +1566,10 @@
                   "Message"
                 ],
                 "selected": "Message",
-                "name": "ChatOutput-FQQc9~message",
+                "name": "ChatOutput-SnloB~message",
                 "hidden": false,
-                "display_name": "Output Message-ChatOutput-FQQc9",
-                "method": "_resolve_flow_output__ChatOutput_FQQc9__message",
+                "display_name": "Output Message-ChatOutput-SnloB",
+                "method": "_resolve_flow_output__ChatOutput_SnloB__message",
                 "value": "__UNDEFINED__",
                 "cache": true,
                 "required_inputs": null,
@@ -1565,10 +1584,10 @@
                   "Message"
                 ],
                 "selected": "Message",
-                "name": "ChatOutput-awLsq~message",
+                "name": "ChatOutput-qHwSE~message",
                 "hidden": false,
-                "display_name": "Output Message-ChatOutput-awLsq",
-                "method": "_resolve_flow_output__ChatOutput_awLsq__message",
+                "display_name": "Output Message-ChatOutput-qHwSE",
+                "method": "_resolve_flow_output__ChatOutput_qHwSE__message",
                 "value": "__UNDEFINED__",
                 "cache": true,
                 "required_inputs": null,
@@ -1605,11 +1624,11 @@
             "add_tool_output": true
           },
           "showNode": true,
-          "selected_output": "ChatOutput-FQQc9~message"
+          "selected_output": "ChatOutput-SnloB~message"
         }
       },
       {
-        "id": "ChatOutput-fjIZV",
+        "id": "ChatOutput-Os11U",
         "type": "genericNode",
         "position": {
           "x": 1920,
@@ -1617,7 +1636,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-fjIZV",
+          "id": "ChatOutput-Os11U",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -1916,7 +1935,7 @@
         }
       },
       {
-        "id": "ChatOutput-fVeJ9",
+        "id": "ChatOutput-RC7OF",
         "type": "genericNode",
         "position": {
           "x": 1920,
@@ -1924,7 +1943,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-fVeJ9",
+          "id": "ChatOutput-RC7OF",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -2223,7 +2242,7 @@
         }
       },
       {
-        "id": "ChatOutput-Zz2UR",
+        "id": "ChatOutput-tuPo7",
         "type": "genericNode",
         "position": {
           "x": 2400,
@@ -2231,7 +2250,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-Zz2UR",
+          "id": "ChatOutput-tuPo7",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -2530,7 +2549,7 @@
         }
       },
       {
-        "id": "CustomComponent-6bb4a",
+        "id": "CustomComponent-32hE7",
         "type": "genericNode",
         "position": {
           "x": 1440,
@@ -2538,7 +2557,7 @@
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-6bb4a",
+          "id": "CustomComponent-32hE7",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -2595,7 +2614,7 @@
                 "placeholder": "",
                 "show": true,
                 "name": "gate_id",
-                "value": "HumanInput-Gy29k",
+                "value": "HumanInput-IvOz5",
                 "display_name": "HumanInput Node ID",
                 "advanced": true,
                 "api_editable": false,
@@ -2653,7 +2672,7 @@
                 "selected": "Message",
                 "name": "output",
                 "hidden": null,
-                "display_name": "Review Result or Revision Input",
+                "display_name": "Output",
                 "method": "record_decision",
                 "value": "__UNDEFINED__",
                 "cache": true,
@@ -2692,7 +2711,7 @@
         }
       },
       {
-        "id": "ChatOutput-KzcUN",
+        "id": "ChatOutput-v6WHT",
         "type": "genericNode",
         "position": {
           "x": 1920,
@@ -2700,7 +2719,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-KzcUN",
+          "id": "ChatOutput-v6WHT",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -3006,7 +3025,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ChatInput",
-            "id": "ChatInput-lsdBO",
+            "id": "ChatInput-uSAbT",
             "name": "message",
             "output_types": [
               "Message"
@@ -3014,19 +3033,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-eIQYv",
+            "id": "CustomComponent-D0sGt",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ChatInput-lsdBO{œdataTypeœ:œChatInputœ,œidœ:œChatInput-lsdBOœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-eIQYv{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-eIQYvœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ChatInput-uSAbT{œdataTypeœ:œChatInputœ,œidœ:œChatInput-uSAbTœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-D0sGt{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-D0sGtœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ChatInput-lsdBO",
-        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-lsdBOœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-eIQYv",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-eIQYvœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ChatInput-uSAbT",
+        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-uSAbTœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-D0sGt",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-D0sGtœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -3034,7 +3053,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-eIQYv",
+            "id": "CustomComponent-D0sGt",
             "name": "output",
             "output_types": [
               "Message"
@@ -3042,19 +3061,19 @@
           },
           "targetHandle": {
             "fieldName": "prompt",
-            "id": "HumanInput-Gy29k",
+            "id": "HumanInput-IvOz5",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-CustomComponent-eIQYv{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-eIQYvœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-HumanInput-Gy29k{œfieldNameœ:œpromptœ,œidœ:œHumanInput-Gy29kœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-CustomComponent-D0sGt{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-D0sGtœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-HumanInput-IvOz5{œfieldNameœ:œpromptœ,œidœ:œHumanInput-IvOz5œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "CustomComponent-eIQYv",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-eIQYvœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "HumanInput-Gy29k",
-        "targetHandle": "{œfieldNameœ:œpromptœ,œidœ:œHumanInput-Gy29kœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "CustomComponent-D0sGt",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-D0sGtœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "HumanInput-IvOz5",
+        "targetHandle": "{œfieldNameœ:œpromptœ,œidœ:œHumanInput-IvOz5œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -3062,7 +3081,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "HumanInput",
-            "id": "HumanInput-Gy29k",
+            "id": "HumanInput-IvOz5",
             "name": "branch_approve",
             "output_types": [
               "Message"
@@ -3070,19 +3089,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-pHsmC",
+            "id": "CustomComponent-SOm3j",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-HumanInput-Gy29k{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_approveœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-pHsmC{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-pHsmCœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-HumanInput-IvOz5{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_approveœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-SOm3j{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-SOm3jœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "HumanInput-Gy29k",
-        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_approveœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-pHsmC",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-pHsmCœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "HumanInput-IvOz5",
+        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_approveœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-SOm3j",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-SOm3jœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -3090,7 +3109,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "HumanInput",
-            "id": "HumanInput-Gy29k",
+            "id": "HumanInput-IvOz5",
             "name": "branch_escalate",
             "output_types": [
               "Message"
@@ -3098,19 +3117,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-jADov",
+            "id": "CustomComponent-juo0I",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-HumanInput-Gy29k{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_escalateœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-jADov{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-jADovœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-HumanInput-IvOz5{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_escalateœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-juo0I{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-juo0Iœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "HumanInput-Gy29k",
-        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_escalateœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-jADov",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-jADovœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "HumanInput-IvOz5",
+        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_escalateœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-juo0I",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-juo0Iœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -3118,7 +3137,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "HumanInput",
-            "id": "HumanInput-Gy29k",
+            "id": "HumanInput-IvOz5",
             "name": "branch_request_changes",
             "output_types": [
               "Message"
@@ -3126,19 +3145,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-eYDR9",
+            "id": "CustomComponent-sdoOh",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-HumanInput-Gy29k{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_request_changesœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-eYDR9{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-eYDR9œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-HumanInput-IvOz5{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_request_changesœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-sdoOh{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-sdoOhœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "HumanInput-Gy29k",
-        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_request_changesœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-eYDR9",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-eYDR9œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "HumanInput-IvOz5",
+        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_request_changesœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-sdoOh",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-sdoOhœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -3146,7 +3165,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-pHsmC",
+            "id": "CustomComponent-SOm3j",
             "name": "output",
             "output_types": [
               "Message"
@@ -3154,7 +3173,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-fjIZV",
+            "id": "ChatOutput-Os11U",
             "inputTypes": [
               "Data",
               "JSON",
@@ -3165,12 +3184,12 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-CustomComponent-pHsmC{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-pHsmCœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-fjIZV{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-fjIZVœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-CustomComponent-SOm3j{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-SOm3jœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-Os11U{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-Os11Uœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "CustomComponent-pHsmC",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-pHsmCœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-fjIZV",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-fjIZVœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "CustomComponent-SOm3j",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-SOm3jœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-Os11U",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-Os11Uœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -3178,7 +3197,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-jADov",
+            "id": "CustomComponent-juo0I",
             "name": "output",
             "output_types": [
               "Message"
@@ -3186,7 +3205,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-fVeJ9",
+            "id": "ChatOutput-RC7OF",
             "inputTypes": [
               "Data",
               "JSON",
@@ -3197,72 +3216,12 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-CustomComponent-jADov{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jADovœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-fVeJ9{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-fVeJ9œ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-CustomComponent-juo0I{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-juo0Iœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-RC7OF{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-RC7OFœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "CustomComponent-jADov",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jADovœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-fVeJ9",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-fVeJ9œ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "CustomComponent",
-            "id": "CustomComponent-eYDR9",
-            "name": "output",
-            "output_types": [
-              "Message"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "ChatInput-clBqp~input_value",
-            "id": "RunFlow-m412w",
-            "inputTypes": [
-              "Message"
-            ],
-            "type": "str"
-          }
-        },
-        "id": "reactflow__edge-CustomComponent-eYDR9{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-eYDR9œ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-RunFlow-m412w{œfieldNameœ:œChatInput-clBqp~input_valueœ,œidœ:œRunFlow-m412wœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
-        "selected": false,
-        "source": "CustomComponent-eYDR9",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-eYDR9œ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "RunFlow-m412w",
-        "targetHandle": "{œfieldNameœ:œChatInput-clBqp~input_valueœ,œidœ:œRunFlow-m412wœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "RunFlow",
-            "id": "RunFlow-m412w",
-            "name": "ChatOutput-FQQc9~message",
-            "output_types": [
-              "Message"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "input_value",
-            "id": "ChatOutput-Zz2UR",
-            "inputTypes": [
-              "Data",
-              "JSON",
-              "DataFrame",
-              "Table",
-              "Message"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "reactflow__edge-RunFlow-m412w{œdataTypeœ:œRunFlowœ,œidœ:œRunFlow-m412wœ,œnameœ:œChatOutput-FQQc9~messageœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-Zz2UR{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-Zz2URœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "RunFlow-m412w",
-        "sourceHandle": "{œdataTypeœ:œRunFlowœ,œidœ:œRunFlow-m412wœ,œnameœ:œChatOutput-FQQc9~messageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-Zz2UR",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-Zz2URœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "CustomComponent-juo0I",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-juo0Iœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-RC7OF",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-RC7OFœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -3270,7 +3229,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "HumanInput",
-            "id": "HumanInput-Gy29k",
+            "id": "HumanInput-IvOz5",
             "name": "branch_fallback",
             "output_types": [
               "Message"
@@ -3278,19 +3237,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-6bb4a",
+            "id": "CustomComponent-32hE7",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-HumanInput-Gy29k{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_fallbackœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-6bb4a{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-6bb4aœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-HumanInput-IvOz5{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_fallbackœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-32hE7{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-32hE7œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "HumanInput-Gy29k",
-        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-Gy29kœ,œnameœ:œbranch_fallbackœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-6bb4a",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-6bb4aœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "HumanInput-IvOz5",
+        "sourceHandle": "{œdataTypeœ:œHumanInputœ,œidœ:œHumanInput-IvOz5œ,œnameœ:œbranch_fallbackœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-32hE7",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-32hE7œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -3298,7 +3257,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-6bb4a",
+            "id": "CustomComponent-32hE7",
             "name": "output",
             "output_types": [
               "Message"
@@ -3306,7 +3265,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-KzcUN",
+            "id": "ChatOutput-v6WHT",
             "inputTypes": [
               "Data",
               "JSON",
@@ -3317,18 +3276,73 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-CustomComponent-6bb4a{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-6bb4aœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-KzcUN{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-KzcUNœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-CustomComponent-32hE7{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-32hE7œ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-v6WHT{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-v6WHTœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "CustomComponent-6bb4a",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-6bb4aœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-KzcUN",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-KzcUNœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "CustomComponent-32hE7",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-32hE7œ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-v6WHT",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-v6WHTœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "CustomComponent",
+            "id": "CustomComponent-sdoOh",
+            "name": "output",
+            "output_types": [
+              "Message"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "ChatInput-Jk9Uf~input_value",
+            "id": "RunFlow-rGQR7",
+            "inputTypes": [
+              "Message"
+            ],
+            "type": "str"
+          }
+        },
+        "id": "reactflow__edge-CustomComponent-sdoOh{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-sdoOhœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-RunFlow-rGQR7{œfieldNameœ:œChatInput-Jk9Uf~input_valueœ,œidœ:œRunFlow-rGQR7œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "selected": false,
+        "source": "CustomComponent-sdoOh",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-sdoOhœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "RunFlow-rGQR7",
+        "targetHandle": "{œfieldNameœ:œChatInput-Jk9Uf~input_valueœ,œidœ:œRunFlow-rGQR7œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "RunFlow",
+            "id": "RunFlow-rGQR7",
+            "name": "ChatOutput-SnloB~message",
+            "output_types": [
+              "Message"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "input_value",
+            "id": "ChatOutput-tuPo7",
+            "inputTypes": [
+              "Data",
+              "JSON",
+              "DataFrame",
+              "Table",
+              "Message"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "reactflow__edge-RunFlow-rGQR7{œdataTypeœ:œRunFlowœ,œidœ:œRunFlow-rGQR7œ,œnameœ:œChatOutput-SnloB~messageœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-tuPo7{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-tuPo7œ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "RunFlow-rGQR7",
+        "sourceHandle": "{œdataTypeœ:œRunFlowœ,œidœ:œRunFlow-rGQR7œ,œnameœ:œChatOutput-SnloB~messageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-tuPo7",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-tuPo7œ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       }
-    ],
-    "viewport": {
-      "x": 0,
-      "y": 0,
-      "zoom": 1
-    }
+    ]
   }
 }
