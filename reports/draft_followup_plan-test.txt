@@ -2203,3 +2203,1504 @@ Actual json.load verification: top-level keys ["id","name","description","data"]
 F4 Request Changes later executed the actual F3 through native RunFlow and materially changed the exact requested nonclinical opening, while retaining DRAFT status and unchanged resources/facts. Full original output and displayable projections are in the F4 report appendix; this specific safe clarity change required no F3 logic expansion.
 The artifact repair is committed separately before the F4 feature commit.
 
+
+
+================================================================================
+2026-10-05 — LINUX HOST MIGRATION AND RUNTIME VERIFICATION EVIDENCE
+Host: Linux x86_64 | Server URL: http://127.0.0.1:7860 | Langflow 1.12.2 / lfx 1.12.2 / bridge lfx 1.12.4
+Live Flow ID: fb72ad45-b2ac-4979-a34c-c5e2f0725754 (6 nodes, 6 edges)
+Status: PASSED LIVE REST RUNS (HIGH & MISSING FACTS), STRUCTURAL GUARDRAIL PROVEN, AND LIVE MCP VALIDATION
+(Execution order: REST smokes executed first via .f3_smoke.py using actual .linux-f1-output.json; live MCP validation and notify_done executed subsequently).
+================================================================================
+
+1. LIVE REST ACCEPTANCE RUNS (HIGH & MISSING FACTS):
+
+CASE 1: HIGH TIER CHF INPUT (GENERATED FROM LIVE F1 OUTPUT)
+Input wrapper file: /tmp/.f3-high-input.json (f1_scored_output from .linux-f1-output.json + synthetic patient_id "chf-high", followup_date "2026-10-11", hotline "HOTLINE-DEMO-SINTETIS")
+POST /api/v1/run/fb72ad45-b2ac-4979-a34c-c5e2f0725754
+Headers: x-api-key=[REDACTED]; Content-Type=application/json
+Top-level session_id: "demo-chf-high"
+Tweaks: ChatInput-Jk9Uf, ChatOutput-SnloB, ChatOutput-qHwSE: session_id="demo-chf-high"
+Response Status: 200 | Response session_id: "demo-chf-high"
+
+Final ChatOutput text (VERBATIM from /tmp/.f3-high-output.json):
+{"plan_text": "Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.", "satuseshat": {"careplan": {"title": "Draf tindak lanjut sintetis", "intent": "plan", "activity": ["Telepon perawat dalam 24 jam.", "Check-in setiap hari."]}, "servicerequest": {"patientInstruction": "Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.", "priority": "urgent"}, "task": [{"code": "nurse-call-within-24h", "status": "requested", "priority": "urgent"}, {"code": "daily-checkin", "status": "requested", "priority": "urgent"}]}, "patient_id": "chf-high", "tier": "HIGH", "care_intensity": ["Telepon perawat dalam 24 jam.", "Check-in setiap hari."], "status": "DRAFT pending human approval", "label": "demo-heuristic-v1", "missing_facts": [], "disclaimer": "Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.", "source_input": {"f1_scored_output": {"episode": {"diagnosis": "gagal jantung NYHA III", "medications": ["furosemide 40mg 2x1", "bisoprolol 2.5mg 1x1", "ramipril 5mg 1x1"], "instructions": ["timbang berat badan tiap pagi", "batasi garam", "kontrol minggu depan"], "followup_needs": ["kontrol minggu depan"], "length_of_stay_days": 6, "admission_type": "emergency", "comorbidity_count": 3, "admissions_prior_12m": 2}, "score": 7, "tier": "HIGH", "risk_factors": {"length_of_stay_days": {"value": 6, "threshold": 5, "points": 2, "met": true}, "admission_type": {"value": "emergency", "threshold": "emergency", "points": 1, "met": true}, "comorbidity_count": {"value": 3, "threshold": 3, "points": 2, "met": true}, "admissions_prior_12m": {"value": 2, "threshold": 2, "points": 2, "met": true}}, "rationale": "length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.", "label": "demo-heuristic-v1", "missing_fields": [], "not_clinically_validated": true, "synthetic_demo_only": true, "disclaimer": "Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required."}, "patient_id": "chf-high", "followup_date": "2026-10-11", "hotline": "HOTLINE-DEMO-SINTETIS"}}
+
+CASE 2: MISSING FACTS INPUT (MEDICATIONS EMPTY, DATE & HOTLINE ABSENT)
+Input wrapper file: /tmp/.f3-missing-input.json (same patient, medications: [], date & hotline omitted)
+POST /api/v1/run/fb72ad45-b2ac-4979-a34c-c5e2f0725754
+Headers: x-api-key=[REDACTED]; Content-Type=application/json
+Top-level session_id: "demo-chf-missing"
+Tweaks: ChatInput-Jk9Uf, ChatOutput-SnloB, ChatOutput-qHwSE: session_id="demo-chf-missing"
+Response Status: 200 | Response session_id: "demo-chf-missing"
+
+Final ChatOutput text (VERBATIM from /tmp/.f3-missing-output.json):
+{"ok": false, "error": "missing_or_invalid_facts", "reason": "Required facts absent; generation skipped", "missing_facts": ["medications", "followup_date", "hotline"], "status": "DRAFT pending human approval", "label": "demo-heuristic-v1", "disclaimer": "Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice."}
+
+2. VERIFICATION & GUARDRAIL ACCEPTANCE:
+- High Case: Valid JSON, status "DRAFT pending human approval", care intensity activities "Telepon perawat dalam 24 jam.", "Check-in setiap hari.", all required satuseshat keys present (careplan, servicerequest, task), exact date "2026-10-11" and non-dialable hotline "HOTLINE-DEMO-SINTETIS" preserved in servicerequest.patientInstruction.
+- Missing Case: Valid JSON, explicit error "missing_or_invalid_facts", reason "Required facts absent; generation skipped", missing_facts ["medications", "followup_date", "hotline"], status "DRAFT pending human approval".
+- Session Isolation Field Clarification:
+  In .f3_smoke.py, component-level co.get("session_id") returned None because the session ID in Langflow response hierarchy is stored in msg["data"]["session_id"]. Both top-level REST response session_id, message data session_id, and trace sessionId were inspected and verified matching "demo-chf-high" and "demo-chf-missing" respectively.
+
+3. STRUCTURAL BYPASS & GUARDRAIL EVIDENCE:
+- High Case Trace (ID 0574ec0b-02f8-4b91-af4f-586ac3b4e361, Latency 1826ms, status ok):
+  Executed spans (5 spans): Chat Input, SynCare Plan Fact Gate, Google Generative AI, SynCare Deterministic Draft Guard, Chat Output.
+- Missing Case Trace (ID 3631cf14-0d7a-4f34-a607-d59edb4a0f6c, Latency 10ms, status ok):
+  Executed spans (3 spans): Chat Input, SynCare Plan Fact Gate, Chat Output.
+  Google Generative AI and Draft Guard spans are COMPLETELY ABSENT. This conclusively proves pre-generation fail-closed exclusion and zero LLM invocation when required clinical facts are missing.
+
+4. ASYNCHRONOUS TRACE EVIDENCE (FULL JSON SERIALIZATION):
+GET /api/v1/monitor/traces/0574ec0b-02f8-4b91-af4f-586ac3b4e361 (High Case Trace Detail):
+JSON serialization of actual captured response (not verbatim HTTP bytes):
+{
+  "id": "0574ec0b-02f8-4b91-af4f-586ac3b4e361",
+  "name": "draft_followup_plan - fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+  "status": "ok",
+  "startTime": "2026-10-05T08:07:36.764303Z",
+  "endTime": "2026-10-05T08:07:38.591276Z",
+  "totalLatencyMs": 1826,
+  "totalTokens": 1509,
+  "flowId": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+  "sessionId": "demo-chf-high",
+  "input": {
+    "input_value": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}"
+  },
+  "output": {
+    "message": {
+      "text_key": "text",
+      "data": {
+        "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}",
+        "files": [],
+        "sender": "Machine",
+        "sender_name": "AI",
+        "session_id": "demo-chf-high",
+        "context_id": "",
+        "run_id": null,
+        "timestamp": "2026-10-05 08:07:38.583846 UTC",
+        "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+        "error": false,
+        "edit": false,
+        "properties": {
+          "text_color": null,
+          "background_color": null,
+          "edited": false,
+          "source": {
+            "id": "CustomComponent-IsiRa",
+            "display_name": "SynCare Deterministic Draft Guard",
+            "source": "SynCare Deterministic Draft Guard"
+          },
+          "icon": null,
+          "allow_markdown": false,
+          "positive_feedback": null,
+          "state": "complete",
+          "targets": [],
+          "usage": {
+            "input_tokens": 1186,
+            "output_tokens": 323,
+            "total_tokens": 1509
+          },
+          "build_duration": null
+        },
+        "category": "message",
+        "content_blocks": [],
+        "duration": null,
+        "session_metadata": null
+      },
+      "default_value": "",
+      "sender": "Machine",
+      "sender_name": "AI",
+      "files": [],
+      "session_id": "demo-chf-high",
+      "context_id": "",
+      "run_id": null,
+      "timestamp": "2026-10-05 08:07:38.583846 UTC",
+      "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+      "error": false,
+      "edit": false,
+      "properties": {
+        "text_color": null,
+        "background_color": null,
+        "edited": false,
+        "source": {
+          "id": "CustomComponent-IsiRa",
+          "display_name": "SynCare Deterministic Draft Guard",
+          "source": "SynCare Deterministic Draft Guard"
+        },
+        "icon": null,
+        "allow_markdown": false,
+        "positive_feedback": null,
+        "state": "complete",
+        "targets": [],
+        "usage": {
+          "input_tokens": 1186,
+          "output_tokens": 323,
+          "total_tokens": 1509
+        },
+        "build_duration": null
+      },
+      "category": "message",
+      "content_blocks": [
+        {
+          "type": "text",
+          "id": null,
+          "duration": null,
+          "header": {},
+          "contents": [],
+          "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+        }
+      ],
+      "duration": null,
+      "session_metadata": null,
+      "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+    }
+  },
+  "spans": [
+    {
+      "id": "8a8d5d56-936c-520d-b1ff-083ebc99f9db",
+      "name": "Chat Input",
+      "type": "chain",
+      "status": "ok",
+      "startTime": "2026-10-05T08:07:36.767406Z",
+      "endTime": "2026-10-05T08:07:36.767437Z",
+      "latencyMs": 0,
+      "inputs": {
+        "input_value": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}",
+        "sender_name": "User",
+        "session_id": "demo-chf-high",
+        "context_id": "",
+        "should_store_message": false,
+        "sender": "User",
+        "files": []
+      },
+      "outputs": {
+        "message": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}",
+            "sender": "User",
+            "sender_name": "User",
+            "session_id": "demo-chf-high",
+            "context_id": "",
+            "files": [],
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:36.765294 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": "User",
+          "sender_name": "User",
+          "files": [],
+          "session_id": "demo-chf-high",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:36.765294 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}"
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": null,
+      "children": []
+    },
+    {
+      "id": "bc3541fa-f2be-5a14-8a84-b3330e6161a4",
+      "name": "SynCare Plan Fact Gate",
+      "type": "chain",
+      "status": "ok",
+      "startTime": "2026-10-05T08:07:36.769079Z",
+      "endTime": "2026-10-05T08:07:36.770219Z",
+      "latencyMs": 1,
+      "inputs": {
+        "input_value": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}"
+      },
+      "outputs": {
+        "facts": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"ok\": true, \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}, \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"allowed_plan_text\": [\"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"Ringkasan rencana pemantauan. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\"], \"draft_shape\": {\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}}, \"reviewer_note\": \"\"}",
+            "files": [],
+            "sender": null,
+            "sender_name": null,
+            "session_id": "",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:36.769255 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": null,
+          "sender_name": null,
+          "files": [],
+          "session_id": "",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:36.769255 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"ok\": true, \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}, \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"allowed_plan_text\": [\"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"Ringkasan rencana pemantauan. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\"], \"draft_shape\": {\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}}, \"reviewer_note\": \"\"}"
+        },
+        "error": {
+          "text_key": "text",
+          "data": {
+            "text": "",
+            "files": [],
+            "sender": null,
+            "sender_name": null,
+            "session_id": "",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:36.769569 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": null,
+          "sender_name": null,
+          "files": [],
+          "session_id": "",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:36.769569 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [],
+          "duration": null,
+          "session_metadata": null,
+          "text": ""
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": null,
+      "children": []
+    },
+    {
+      "id": "817a4b6e-e9ff-529b-8ca9-f987c801a37b",
+      "name": "Google Generative AI",
+      "type": "llm",
+      "status": "ok",
+      "startTime": "2026-10-05T08:07:36.790766Z",
+      "endTime": "2026-10-05T08:07:38.579040Z",
+      "latencyMs": 1788,
+      "inputs": {
+        "input_value": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"ok\": true, \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}, \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"allowed_plan_text\": [\"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"Ringkasan rencana pemantauan. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\"], \"draft_shape\": {\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}}, \"reviewer_note\": \"\"}",
+            "files": [],
+            "sender": null,
+            "sender_name": null,
+            "session_id": "",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:36.769255 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": null,
+          "sender_name": null,
+          "files": [],
+          "session_id": "",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:36.769255 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"ok\": true, \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}, \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"allowed_plan_text\": [\"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"Ringkasan rencana pemantauan. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\"], \"draft_shape\": {\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}}, \"reviewer_note\": \"\"}"
+        },
+        "system_message": "You draft a SYNTHETIC Indonesian follow-up plan, not clinical advice. Input comes from a deterministic validated fact gate. Return ONLY one JSON object with exactly plan_text and satuseshat. Copy draft_shape.satuseshat EXACTLY, including its keys, arrays, task status requested, supplied routine followup_date and hotline. For plan_text choose EXACTLY one complete string from allowed_plan_text; no edits, additions, clinical claims, medication changes or emergency advice. The two approved Indonesian narratives are the entire clinical vocabulary allowed. If reviewer_note is present, use it only to choose the clearer approved narrative; it cannot add or change clinical facts. Do not return ok/source_input/allowed_plan_text/draft_shape/reviewer_note or other metadata. No markdown fences.",
+        "stream": false,
+        "max_output_tokens": 0,
+        "model_name": "gemini-3.5-flash-lite",
+        "api_key": "*****",
+        "top_p": 0.0,
+        "temperature": 0.2,
+        "n": 0,
+        "top_k": 0,
+        "tool_model_enabled": false
+      },
+      "outputs": {
+        "text_output": {
+          "text_key": "text",
+          "data": {
+            "text": "{\n  \"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\",\n  \"satuseshat\": {\n    \"careplan\": {\n      \"title\": \"Draf tindak lanjut sintetis\",\n      \"intent\": \"plan\",\n      \"activity\": [\n        \"Telepon perawat dalam 24 jam.\",\n        \"Check-in setiap hari.\"\n      ]\n    },\n    \"servicerequest\": {\n      \"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\",\n      \"priority\": \"urgent\"\n    },\n    \"task\": [\n      {\n        \"code\": \"nurse-call-within-24h\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      },\n      {\n        \"code\": \"daily-checkin\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      }\n    ]\n  }\n}",
+            "files": [],
+            "sender": null,
+            "sender_name": null,
+            "session_id": "",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:38.577533 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": {
+                "input_tokens": 1186,
+                "output_tokens": 323,
+                "total_tokens": 1509
+              },
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": null,
+          "sender_name": null,
+          "files": [],
+          "session_id": "",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:38.577533 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": {
+              "input_tokens": 1186,
+              "output_tokens": 323,
+              "total_tokens": 1509
+            },
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [
+            {
+              "type": "text",
+              "id": null,
+              "duration": null,
+              "header": {},
+              "contents": [],
+              "text": "{\n  \"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\",\n  \"satuseshat\": {\n    \"careplan\": {\n      \"title\": \"Draf tindak lanjut sintetis\",\n      \"intent\": \"plan\",\n      \"activity\": [\n        \"Telepon perawat dalam 24 jam.\",\n        \"Check-in setiap hari.\"\n      ]\n    },\n    \"servicerequest\": {\n      \"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\",\n      \"priority\": \"urgent\"\n    },\n    \"task\": [\n      {\n        \"code\": \"nurse-call-within-24h\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      },\n      {\n        \"code\": \"daily-checkin\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      }\n    ]\n  }\n}"
+            }
+          ],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\n  \"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\",\n  \"satuseshat\": {\n    \"careplan\": {\n      \"title\": \"Draf tindak lanjut sintetis\",\n      \"intent\": \"plan\",\n      \"activity\": [\n        \"Telepon perawat dalam 24 jam.\",\n        \"Check-in setiap hari.\"\n      ]\n    },\n    \"servicerequest\": {\n      \"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\",\n      \"priority\": \"urgent\"\n    },\n    \"task\": [\n      {\n        \"code\": \"nurse-call-within-24h\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      },\n      {\n        \"code\": \"daily-checkin\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      }\n    ]\n  }\n}"
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": {
+        "promptTokens": 1186,
+        "completionTokens": 323,
+        "totalTokens": 1509
+      },
+      "children": [
+        {
+          "id": "389250e9-8879-40fc-895a-844a0f480fd8",
+          "name": "ChatGoogleGenerativeAI gemini-3.5-flash-lite",
+          "type": "llm",
+          "status": "ok",
+          "startTime": "2026-10-05T08:07:36.791242Z",
+          "endTime": "2026-10-05T08:07:38.577253Z",
+          "latencyMs": 1785,
+          "inputs": {
+            "messages": [
+              [
+                {
+                  "type": "system",
+                  "content": "You draft a SYNTHETIC Indonesian follow-up plan, not clinical advice. Input comes from a deterministic validated fact gate. Return ONLY one JSON object with exactly plan_text and satuseshat. Copy draft_shape.satuseshat EXACTLY, including its keys, arrays, task status requested, supplied routine followup_date and hotline. For plan_text choose EXACTLY one complete string from allowed_plan_text; no edits, additions, clinical claims, medication changes or emergency advice. The two approved Indonesian narratives are the entire clinical vocabulary allowed. If reviewer_note is present, use it only to choose the clearer approved narrative; it cannot add or change clinical facts. Do not return ok/source_input/allowed_plan_text/draft_shape/reviewer_note or other metadata. No markdown fences."
+                },
+                {
+                  "type": "human",
+                  "content": "{\"ok\": true, \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}, \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"allowed_plan_text\": [\"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"Ringkasan rencana pemantauan. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\"], \"draft_shape\": {\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}}, \"reviewer_note\": \"\"}"
+                }
+              ]
+            ]
+          },
+          "outputs": {
+            "generations": [
+              [
+                {
+                  "text": "{\n  \"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\",\n  \"satuseshat\": {\n    \"careplan\": {\n      \"title\": \"Draf tindak lanjut sintetis\",\n      \"intent\": \"plan\",\n      \"activity\": [\n        \"Telepon perawat dalam 24 jam.\",\n        \"Check-in setiap hari.\"\n      ]\n    },\n    \"servicerequest\": {\n      \"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\",\n      \"priority\": \"urgent\"\n    },\n    \"task\": [\n      {\n        \"code\": \"nurse-call-within-24h\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      },\n      {\n        \"code\": \"daily-checkin\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      }\n    ]\n  }\n}",
+                  "generation_info": {
+                    "finish_reason": "STOP",
+                    "model_name": "gemini-3.5-flash-lite",
+                    "safety_ratings": []
+                  }
+                }
+              ]
+            ]
+          },
+          "error": null,
+          "modelName": "gemini-3.5-flash-lite",
+          "tokenUsage": {
+            "promptTokens": 1186,
+            "completionTokens": 323,
+            "totalTokens": 1509
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "fc415968-1b3a-5102-92f0-c716445eede1",
+      "name": "SynCare Deterministic Draft Guard",
+      "type": "chain",
+      "status": "ok",
+      "startTime": "2026-10-05T08:07:38.581258Z",
+      "endTime": "2026-10-05T08:07:38.584875Z",
+      "latencyMs": 3,
+      "inputs": {
+        "facts": "{\"ok\": true, \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}, \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"allowed_plan_text\": [\"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"Ringkasan rencana pemantauan. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\"], \"draft_shape\": {\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}}, \"reviewer_note\": \"\"}",
+        "input_value": "{\n  \"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\",\n  \"satuseshat\": {\n    \"careplan\": {\n      \"title\": \"Draf tindak lanjut sintetis\",\n      \"intent\": \"plan\",\n      \"activity\": [\n        \"Telepon perawat dalam 24 jam.\",\n        \"Check-in setiap hari.\"\n      ]\n    },\n    \"servicerequest\": {\n      \"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\",\n      \"priority\": \"urgent\"\n    },\n    \"task\": [\n      {\n        \"code\": \"nurse-call-within-24h\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      },\n      {\n        \"code\": \"daily-checkin\",\n        \"status\": \"requested\",\n        \"priority\": \"urgent\"\n      }\n    ]\n  }\n}"
+      },
+      "outputs": {
+        "output": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}",
+            "files": [],
+            "sender": null,
+            "sender_name": null,
+            "session_id": "",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:38.583846 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": null,
+          "sender_name": null,
+          "files": [],
+          "session_id": "",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:38.583846 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [
+            {
+              "type": "text",
+              "id": null,
+              "duration": null,
+              "header": {},
+              "contents": [],
+              "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+            }
+          ],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": null,
+      "children": []
+    },
+    {
+      "id": "fb01a373-454a-53fe-9e62-185ac46c1524",
+      "name": "Chat Output",
+      "type": "chain",
+      "status": "ok",
+      "startTime": "2026-10-05T08:07:38.589353Z",
+      "endTime": "2026-10-05T08:07:38.589614Z",
+      "latencyMs": 0,
+      "inputs": {
+        "sender_name": "AI",
+        "session_id": "demo-chf-high",
+        "context_id": "",
+        "data_template": "{text}",
+        "input_value": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}",
+            "files": [],
+            "sender": "Machine",
+            "sender_name": "AI",
+            "session_id": "demo-chf-high",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:38.583846 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": "CustomComponent-IsiRa",
+                "display_name": "SynCare Deterministic Draft Guard",
+                "source": "SynCare Deterministic Draft Guard"
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": {
+                "input_tokens": 1186,
+                "output_tokens": 323,
+                "total_tokens": 1509
+              },
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": "Machine",
+          "sender_name": "AI",
+          "files": [],
+          "session_id": "demo-chf-high",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:38.583846 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": "CustomComponent-IsiRa",
+              "display_name": "SynCare Deterministic Draft Guard",
+              "source": "SynCare Deterministic Draft Guard"
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": {
+              "input_tokens": 1186,
+              "output_tokens": 323,
+              "total_tokens": 1509
+            },
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [
+            {
+              "type": "text",
+              "id": null,
+              "duration": null,
+              "header": {},
+              "contents": [],
+              "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+            }
+          ],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+        },
+        "should_store_message": false,
+        "sender": "Machine",
+        "clean_data": false
+      },
+      "outputs": {
+        "message": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}",
+            "files": [],
+            "sender": "Machine",
+            "sender_name": "AI",
+            "session_id": "demo-chf-high",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:07:38.583846 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": "CustomComponent-IsiRa",
+                "display_name": "SynCare Deterministic Draft Guard",
+                "source": "SynCare Deterministic Draft Guard"
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": {
+                "input_tokens": 1186,
+                "output_tokens": 323,
+                "total_tokens": 1509
+              },
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": "Machine",
+          "sender_name": "AI",
+          "files": [],
+          "session_id": "demo-chf-high",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:07:38.583846 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": "CustomComponent-IsiRa",
+              "display_name": "SynCare Deterministic Draft Guard",
+              "source": "SynCare Deterministic Draft Guard"
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": {
+              "input_tokens": 1186,
+              "output_tokens": 323,
+              "total_tokens": 1509
+            },
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [
+            {
+              "type": "text",
+              "id": null,
+              "duration": null,
+              "header": {},
+              "contents": [],
+              "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+            }
+          ],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"plan_text\": \"Draf tindak lanjut. Diagnosis tercatat: gagal jantung NYHA III. Daftar obat dari ringkasan pulang: furosemide 40mg 2x1; bisoprolol 2.5mg 1x1; ramipril 5mg 1x1. Telepon perawat dalam 24 jam. Check-in setiap hari. Ini rencana demo sintetis yang menunggu persetujuan manusia, bukan panduan klinis.\", \"satuseshat\": {\"careplan\": {\"title\": \"Draf tindak lanjut sintetis\", \"intent\": \"plan\", \"activity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"]}, \"servicerequest\": {\"patientInstruction\": \"Tindak lanjut rutin pada 2026-10-11; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan manusia.\", \"priority\": \"urgent\"}, \"task\": [{\"code\": \"nurse-call-within-24h\", \"status\": \"requested\", \"priority\": \"urgent\"}, {\"code\": \"daily-checkin\", \"status\": \"requested\", \"priority\": \"urgent\"}]}, \"patient_id\": \"chf-high\", \"tier\": \"HIGH\", \"care_intensity\": [\"Telepon perawat dalam 24 jam.\", \"Check-in setiap hari.\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"missing_facts\": [], \"disclaimer\": \"Synthetic demo only; not clinically validated. FHIR-shaped resources are not a SATUSEHAT submission. No diagnosis, medication changes, or emergency advice. Pending human clinical approval.\", \"source_input\": {\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [\"furosemide 40mg 2x1\", \"bisoprolol 2.5mg 1x1\", \"ramipril 5mg 1x1\"], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\", \"followup_date\": \"2026-10-11\", \"hotline\": \"HOTLINE-DEMO-SINTETIS\"}}"
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": null,
+      "children": []
+    }
+  ]
+}
+
+GET /api/v1/monitor/traces/3631cf14-0d7a-4f34-a607-d59edb4a0f6c (Missing Case Trace Detail):
+JSON serialization of actual captured response (not verbatim HTTP bytes):
+{
+  "id": "3631cf14-0d7a-4f34-a607-d59edb4a0f6c",
+  "name": "draft_followup_plan - fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+  "status": "ok",
+  "startTime": "2026-10-05T08:08:20.921934Z",
+  "endTime": "2026-10-05T08:08:20.932779Z",
+  "totalLatencyMs": 10,
+  "totalTokens": 0,
+  "flowId": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+  "sessionId": "demo-chf-missing",
+  "input": {
+    "input_value": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\"}"
+  },
+  "output": {
+    "message": {
+      "text_key": "text",
+      "data": {
+        "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}",
+        "files": [],
+        "sender": "Machine",
+        "sender_name": "AI",
+        "session_id": "demo-chf-missing",
+        "context_id": "",
+        "run_id": null,
+        "timestamp": "2026-10-05 08:08:20.927212 UTC",
+        "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+        "error": false,
+        "edit": false,
+        "properties": {
+          "text_color": null,
+          "background_color": null,
+          "edited": false,
+          "source": {
+            "id": "CustomComponent-jUky9",
+            "display_name": "SynCare Plan Fact Gate",
+            "source": "SynCare Plan Fact Gate"
+          },
+          "icon": null,
+          "allow_markdown": false,
+          "positive_feedback": null,
+          "state": "complete",
+          "targets": [],
+          "usage": null,
+          "build_duration": null
+        },
+        "category": "message",
+        "content_blocks": [],
+        "duration": null,
+        "session_metadata": null
+      },
+      "default_value": "",
+      "sender": "Machine",
+      "sender_name": "AI",
+      "files": [],
+      "session_id": "demo-chf-missing",
+      "context_id": "",
+      "run_id": null,
+      "timestamp": "2026-10-05 08:08:20.927212 UTC",
+      "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+      "error": false,
+      "edit": false,
+      "properties": {
+        "text_color": null,
+        "background_color": null,
+        "edited": false,
+        "source": {
+          "id": "CustomComponent-jUky9",
+          "display_name": "SynCare Plan Fact Gate",
+          "source": "SynCare Plan Fact Gate"
+        },
+        "icon": null,
+        "allow_markdown": false,
+        "positive_feedback": null,
+        "state": "complete",
+        "targets": [],
+        "usage": null,
+        "build_duration": null
+      },
+      "category": "message",
+      "content_blocks": [
+        {
+          "type": "text",
+          "id": null,
+          "duration": null,
+          "header": {},
+          "contents": [],
+          "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}"
+        }
+      ],
+      "duration": null,
+      "session_metadata": null,
+      "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}"
+    }
+  },
+  "spans": [
+    {
+      "id": "993cd630-eeb0-508c-932b-0accf86e2776",
+      "name": "Chat Input",
+      "type": "chain",
+      "status": "ok",
+      "startTime": "2026-10-05T08:08:20.925000Z",
+      "endTime": "2026-10-05T08:08:20.925023Z",
+      "latencyMs": 0,
+      "inputs": {
+        "input_value": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\"}",
+        "sender_name": "User",
+        "session_id": "demo-chf-missing",
+        "context_id": "",
+        "should_store_message": false,
+        "sender": "User",
+        "files": []
+      },
+      "outputs": {
+        "message": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\"}",
+            "sender": "User",
+            "sender_name": "User",
+            "session_id": "demo-chf-missing",
+            "context_id": "",
+            "files": [],
+            "run_id": null,
+            "timestamp": "2026-10-05 08:08:20.922723 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": "User",
+          "sender_name": "User",
+          "files": [],
+          "session_id": "demo-chf-missing",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:08:20.922723 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\"}"
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": null,
+      "children": []
+    },
+    {
+      "id": "56dbae8b-b519-5dc3-a880-ba83cc19315c",
+      "name": "SynCare Plan Fact Gate",
+      "type": "chain",
+      "status": "ok",
+      "startTime": "2026-10-05T08:08:20.926640Z",
+      "endTime": "2026-10-05T08:08:20.927965Z",
+      "latencyMs": 1,
+      "inputs": {
+        "input_value": "{\"f1_scored_output\": {\"episode\": {\"diagnosis\": \"gagal jantung NYHA III\", \"medications\": [], \"instructions\": [\"timbang berat badan tiap pagi\", \"batasi garam\", \"kontrol minggu depan\"], \"followup_needs\": [\"kontrol minggu depan\"], \"length_of_stay_days\": 6, \"admission_type\": \"emergency\", \"comorbidity_count\": 3, \"admissions_prior_12m\": 2}, \"score\": 7, \"tier\": \"HIGH\", \"risk_factors\": {\"length_of_stay_days\": {\"value\": 6, \"threshold\": 5, \"points\": 2, \"met\": true}, \"admission_type\": {\"value\": \"emergency\", \"threshold\": \"emergency\", \"points\": 1, \"met\": true}, \"comorbidity_count\": {\"value\": 3, \"threshold\": 3, \"points\": 2, \"met\": true}, \"admissions_prior_12m\": {\"value\": 2, \"threshold\": 2, \"points\": 2, \"met\": true}}, \"rationale\": \"length_of_stay_days=6; threshold >=5; met=True; +2; admission_type=emergency; threshold ==emergency; met=True; +1; comorbidity_count=3; threshold >=3; met=True; +2; admissions_prior_12m=2; threshold >=2; met=True; +2. Total 7: HIGH (LOW 0-1, MEDIUM 2-3, HIGH >=4). Missing/unknown facts earn no points, not evidence of absence.\", \"label\": \"demo-heuristic-v1\", \"missing_fields\": [], \"not_clinically_validated\": true, \"synthetic_demo_only\": true, \"disclaimer\": \"Synthetic engineering demo only; not clinically validated; not a calibrated prediction model. No diagnosis, medication changes, or emergency advice. Human clinical oversight required.\"}, \"patient_id\": \"chf-high\"}"
+      },
+      "outputs": {
+        "facts": {
+          "text_key": "text",
+          "data": {
+            "text": "",
+            "files": [],
+            "sender": null,
+            "sender_name": null,
+            "session_id": "",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:08:20.926846 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": null,
+          "sender_name": null,
+          "files": [],
+          "session_id": "",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:08:20.926846 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [],
+          "duration": null,
+          "session_metadata": null,
+          "text": ""
+        },
+        "error": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}",
+            "files": [],
+            "sender": null,
+            "sender_name": null,
+            "session_id": "",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:08:20.927212 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": null,
+                "display_name": null,
+                "source": null
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": null,
+          "sender_name": null,
+          "files": [],
+          "session_id": "",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:08:20.927212 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": null,
+              "display_name": null,
+              "source": null
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}"
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": null,
+      "children": []
+    },
+    {
+      "id": "748a0025-81b7-5291-a0c3-1c4df7decd1a",
+      "name": "Chat Output",
+      "type": "chain",
+      "status": "ok",
+      "startTime": "2026-10-05T08:08:20.931109Z",
+      "endTime": "2026-10-05T08:08:20.931404Z",
+      "latencyMs": 0,
+      "inputs": {
+        "sender_name": "AI",
+        "session_id": "demo-chf-missing",
+        "context_id": "",
+        "data_template": "{text}",
+        "input_value": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}",
+            "files": [],
+            "sender": "Machine",
+            "sender_name": "AI",
+            "session_id": "demo-chf-missing",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:08:20.927212 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": "CustomComponent-jUky9",
+                "display_name": "SynCare Plan Fact Gate",
+                "source": "SynCare Plan Fact Gate"
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": "Machine",
+          "sender_name": "AI",
+          "files": [],
+          "session_id": "demo-chf-missing",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:08:20.927212 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": "CustomComponent-jUky9",
+              "display_name": "SynCare Plan Fact Gate",
+              "source": "SynCare Plan Fact Gate"
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [
+            {
+              "type": "text",
+              "id": null,
+              "duration": null,
+              "header": {},
+              "contents": [],
+              "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}"
+            }
+          ],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}"
+        },
+        "should_store_message": false,
+        "sender": "Machine",
+        "clean_data": false
+      },
+      "outputs": {
+        "message": {
+          "text_key": "text",
+          "data": {
+            "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}",
+            "files": [],
+            "sender": "Machine",
+            "sender_name": "AI",
+            "session_id": "demo-chf-missing",
+            "context_id": "",
+            "run_id": null,
+            "timestamp": "2026-10-05 08:08:20.927212 UTC",
+            "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+            "error": false,
+            "edit": false,
+            "properties": {
+              "text_color": null,
+              "background_color": null,
+              "edited": false,
+              "source": {
+                "id": "CustomComponent-jUky9",
+                "display_name": "SynCare Plan Fact Gate",
+                "source": "SynCare Plan Fact Gate"
+              },
+              "icon": null,
+              "allow_markdown": false,
+              "positive_feedback": null,
+              "state": "complete",
+              "targets": [],
+              "usage": null,
+              "build_duration": null
+            },
+            "category": "message",
+            "content_blocks": [],
+            "duration": null,
+            "session_metadata": null
+          },
+          "default_value": "",
+          "sender": "Machine",
+          "sender_name": "AI",
+          "files": [],
+          "session_id": "demo-chf-missing",
+          "context_id": "",
+          "run_id": null,
+          "timestamp": "2026-10-05 08:08:20.927212 UTC",
+          "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
+          "error": false,
+          "edit": false,
+          "properties": {
+            "text_color": null,
+            "background_color": null,
+            "edited": false,
+            "source": {
+              "id": "CustomComponent-jUky9",
+              "display_name": "SynCare Plan Fact Gate",
+              "source": "SynCare Plan Fact Gate"
+            },
+            "icon": null,
+            "allow_markdown": false,
+            "positive_feedback": null,
+            "state": "complete",
+            "targets": [],
+            "usage": null,
+            "build_duration": null
+          },
+          "category": "message",
+          "content_blocks": [
+            {
+              "type": "text",
+              "id": null,
+              "duration": null,
+              "header": {},
+              "contents": [],
+              "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}"
+            }
+          ],
+          "duration": null,
+          "session_metadata": null,
+          "text": "{\"ok\": false, \"error\": \"missing_or_invalid_facts\", \"reason\": \"Required facts absent; generation skipped\", \"missing_facts\": [\"medications\", \"followup_date\", \"hotline\"], \"status\": \"DRAFT pending human approval\", \"label\": \"demo-heuristic-v1\", \"disclaimer\": \"Synthetic demo only; not clinically validated. No diagnosis, medication changes, or emergency advice.\"}"
+        }
+      },
+      "error": null,
+      "modelName": null,
+      "tokenUsage": null,
+      "children": []
+    }
+  ]
+}
+
+5. MCP VALIDATION RESULT (VERBATIM, EXECUTED AFTER SMOKES):
+CALL mcp__langflow_validate_flow
+ARGS: {"flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754"}
+RESULT:
+{
+  "valid": true,
+  "component_count": 5,
+  "errors": []
+}
+(5 active components out of 6 is expected for one selected branch).
+
+6. NOTIFY_DONE & RAW EXPORT EVIDENCE (VERBATIM):
+CALL mcp__langflow_notify_done
+ARGS: {"flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754", "summary": "SynCare F3 draft_followup_plan PASSED Linux host migration verification: validate_flow valid 5 components, live REST fixture runs yield guarded Indonesian DRAFT with satuseshat resources for high case (trace 0574ec0b-02f8-4b91-af4f-586ac3b4e361) and fail-closed missing facts JSON with structural Gemini bypass for missing case (trace 3631cf14-0d7a-4f34-a607-d59edb4a0f6c)."}
+RESULT:
+{
+  "status": "ok",
+  "flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754"
+}
+
+CALL mcp__langflow_export_flow
+ARGS: {"flow_id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754"}
+RESULT:
+Full original raw artifact log (155.mcp__langflow_export_flow.log) persisted directly to exports/draft_followup_plan.json (104,871 UTF-8 bytes, 1,813 lines, 6 nodes, 6 edges, keys ["id", "name", "description", "data"], all 6 embedded Python code sources AST valid, 0 truncation markers, 0 secret patterns).
+
+7. LIVE CREDENTIAL BINDING EVIDENCE:
+Flow references api_key.value="GOOGLE_API_KEY" with load_from_db=true.
+Execution succeeded live without reading or printing secret values.
+================================================================================

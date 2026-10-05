@@ -1,19 +1,19 @@
 {
-  "id": "bd4488e6-e8fb-4107-b497-1b5178bc8371",
+  "id": "fb72ad45-b2ac-4979-a34c-c5e2f0725754",
   "name": "draft_followup_plan",
   "description": "SynCare synthetic F3 guarded Indonesian DRAFT with deterministic fact gate and intensity; not clinically validated.",
   "data": {
     "nodes": [
       {
-        "id": "ChatInput-clBqp",
+        "id": "ChatInput-Jk9Uf",
         "type": "genericNode",
         "position": {
           "x": 0,
-          "y": 0.0
+          "y": 0
         },
         "selected": false,
         "data": {
-          "id": "ChatInput-clBqp",
+          "id": "ChatInput-Jk9Uf",
           "type": "ChatInput",
           "node": {
             "base_classes": [
@@ -305,15 +305,15 @@
         }
       },
       {
-        "id": "CustomComponent-GKyla",
+        "id": "CustomComponent-jUky9",
         "type": "genericNode",
         "position": {
           "x": 480,
-          "y": 0.0
+          "y": 0
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-GKyla",
+          "id": "CustomComponent-jUky9",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -439,15 +439,15 @@
         }
       },
       {
-        "id": "ext:google:GoogleGenerativeAIComponent@official-GdJHj",
+        "id": "ext:google:GoogleGenerativeAIComponent@official-RNzlj",
         "type": "genericNode",
         "position": {
           "x": 960,
-          "y": -175.0
+          "y": -175
         },
         "selected": false,
         "data": {
-          "id": "ext:google:GoogleGenerativeAIComponent@official-GdJHj",
+          "id": "ext:google:GoogleGenerativeAIComponent@official-RNzlj",
           "type": "ext:google:GoogleGenerativeAIComponent@official",
           "node": {
             "template": {
@@ -668,8 +668,8 @@
                 "slider_color": "default",
                 "range_spec": {
                   "step_type": "float",
-                  "min": 0.0,
-                  "max": 1.0,
+                  "min": 0,
+                  "max": 1,
                   "step": 0.01
                 },
                 "override_skip": false,
@@ -869,15 +869,15 @@
         }
       },
       {
-        "id": "CustomComponent-3vJCc",
+        "id": "CustomComponent-IsiRa",
         "type": "genericNode",
         "position": {
           "x": 1440,
-          "y": 0.0
+          "y": 0
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-3vJCc",
+          "id": "CustomComponent-IsiRa",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -1012,15 +1012,15 @@
         }
       },
       {
-        "id": "ChatOutput-FQQc9",
+        "id": "ChatOutput-SnloB",
         "type": "genericNode",
         "position": {
           "x": 1920,
-          "y": 0.0
+          "y": 0
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-FQQc9",
+          "id": "ChatOutput-SnloB",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -1319,15 +1319,15 @@
         }
       },
       {
-        "id": "ChatOutput-awLsq",
+        "id": "ChatOutput-qHwSE",
         "type": "genericNode",
         "position": {
           "x": 960,
-          "y": 175.0
+          "y": 175
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-awLsq",
+          "id": "ChatOutput-qHwSE",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -1633,7 +1633,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ChatInput",
-            "id": "ChatInput-clBqp",
+            "id": "ChatInput-Jk9Uf",
             "name": "message",
             "output_types": [
               "Message"
@@ -1641,19 +1641,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-GKyla",
+            "id": "CustomComponent-jUky9",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ChatInput-clBqp{œdataTypeœ:œChatInputœ,œidœ:œChatInput-clBqpœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-GKyla{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-GKylaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ChatInput-Jk9Uf{œdataTypeœ:œChatInputœ,œidœ:œChatInput-Jk9Ufœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-jUky9{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-jUky9œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ChatInput-clBqp",
-        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-clBqpœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-GKyla",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-GKylaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ChatInput-Jk9Uf",
+        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-Jk9Ufœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-jUky9",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-jUky9œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -1661,7 +1661,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-GKyla",
+            "id": "CustomComponent-jUky9",
             "name": "facts",
             "output_types": [
               "Message"
@@ -1669,19 +1669,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ext:google:GoogleGenerativeAIComponent@official-GdJHj",
+            "id": "ext:google:GoogleGenerativeAIComponent@official-RNzlj",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-CustomComponent-GKyla{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-GKylaœ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}-ext:google:GoogleGenerativeAIComponent@official-GdJHj{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-GdJHjœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-CustomComponent-jUky9{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jUky9œ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}-ext:google:GoogleGenerativeAIComponent@official-RNzlj{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-RNzljœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "CustomComponent-GKyla",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-GKylaœ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ext:google:GoogleGenerativeAIComponent@official-GdJHj",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-GdJHjœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "CustomComponent-jUky9",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jUky9œ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ext:google:GoogleGenerativeAIComponent@official-RNzlj",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-RNzljœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -1689,7 +1689,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-GKyla",
+            "id": "CustomComponent-jUky9",
             "name": "facts",
             "output_types": [
               "Message"
@@ -1697,19 +1697,19 @@
           },
           "targetHandle": {
             "fieldName": "facts",
-            "id": "CustomComponent-3vJCc",
+            "id": "CustomComponent-IsiRa",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-CustomComponent-GKyla{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-GKylaœ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-3vJCc{œfieldNameœ:œfactsœ,œidœ:œCustomComponent-3vJCcœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-CustomComponent-jUky9{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jUky9œ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-IsiRa{œfieldNameœ:œfactsœ,œidœ:œCustomComponent-IsiRaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "CustomComponent-GKyla",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-GKylaœ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-3vJCc",
-        "targetHandle": "{œfieldNameœ:œfactsœ,œidœ:œCustomComponent-3vJCcœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "CustomComponent-jUky9",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jUky9œ,œnameœ:œfactsœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-IsiRa",
+        "targetHandle": "{œfieldNameœ:œfactsœ,œidœ:œCustomComponent-IsiRaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -1717,7 +1717,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ext:google:GoogleGenerativeAIComponent@official",
-            "id": "ext:google:GoogleGenerativeAIComponent@official-GdJHj",
+            "id": "ext:google:GoogleGenerativeAIComponent@official-RNzlj",
             "name": "text_output",
             "output_types": [
               "Message"
@@ -1725,19 +1725,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-3vJCc",
+            "id": "CustomComponent-IsiRa",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ext:google:GoogleGenerativeAIComponent@official-GdJHj{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-GdJHjœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-3vJCc{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-3vJCcœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ext:google:GoogleGenerativeAIComponent@official-RNzlj{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-RNzljœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-IsiRa{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-IsiRaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ext:google:GoogleGenerativeAIComponent@official-GdJHj",
-        "sourceHandle": "{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-GdJHjœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-3vJCc",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-3vJCcœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ext:google:GoogleGenerativeAIComponent@official-RNzlj",
+        "sourceHandle": "{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-RNzljœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-IsiRa",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-IsiRaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -1745,7 +1745,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-3vJCc",
+            "id": "CustomComponent-IsiRa",
             "name": "output",
             "output_types": [
               "Message"
@@ -1753,7 +1753,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-FQQc9",
+            "id": "ChatOutput-SnloB",
             "inputTypes": [
               "Data",
               "JSON",
@@ -1764,12 +1764,12 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-CustomComponent-3vJCc{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-3vJCcœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-FQQc9{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-FQQc9œ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-CustomComponent-IsiRa{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-IsiRaœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-SnloB{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-SnloBœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "CustomComponent-3vJCc",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-3vJCcœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-FQQc9",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-FQQc9œ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "CustomComponent-IsiRa",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-IsiRaœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-SnloB",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-SnloBœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -1777,7 +1777,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-GKyla",
+            "id": "CustomComponent-jUky9",
             "name": "error",
             "output_types": [
               "Message"
@@ -1785,7 +1785,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-awLsq",
+            "id": "ChatOutput-qHwSE",
             "inputTypes": [
               "Data",
               "JSON",
@@ -1796,12 +1796,12 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-CustomComponent-GKyla{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-GKylaœ,œnameœ:œerrorœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-awLsq{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-awLsqœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-CustomComponent-jUky9{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jUky9œ,œnameœ:œerrorœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-qHwSE{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-qHwSEœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "CustomComponent-GKyla",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-GKylaœ,œnameœ:œerrorœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-awLsq",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-awLsqœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "CustomComponent-jUky9",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-jUky9œ,œnameœ:œerrorœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-qHwSE",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-qHwSEœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       }
     ],
     "viewport": {
