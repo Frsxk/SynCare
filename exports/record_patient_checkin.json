@@ -1,11 +1,11 @@
 {
-  "id": "9b6cc0a6-7006-4f07-86e9-f47b61c9b462",
+  "id": "22698f53-9f32-4fc9-acc2-c53efdcd9f58",
   "name": "record_patient_checkin",
   "description": "SynCare synthetic-only check-in extraction, structural red-flag scorer bypass, deterministic demo-heuristic-v1; not clinically validated.",
   "data": {
     "nodes": [
       {
-        "id": "ChatInput-IW816",
+        "id": "ChatInput-WtGHx",
         "type": "genericNode",
         "position": {
           "x": 0,
@@ -13,7 +13,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatInput-IW816",
+          "id": "ChatInput-WtGHx",
           "type": "ChatInput",
           "node": {
             "base_classes": [
@@ -302,14 +302,10 @@
             "category": "input_output"
           },
           "showNode": true
-        },
-        "measured": {
-          "width": 320,
-          "height": 207
         }
       },
       {
-        "id": "ext:google:GoogleGenerativeAIComponent@official-3KvJe",
+        "id": "ext:google:GoogleGenerativeAIComponent@official-Dytq8",
         "type": "genericNode",
         "position": {
           "x": 480,
@@ -317,7 +313,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ext:google:GoogleGenerativeAIComponent@official-3KvJe",
+          "id": "ext:google:GoogleGenerativeAIComponent@official-Dytq8",
           "type": "ext:google:GoogleGenerativeAIComponent@official",
           "node": {
             "template": {
@@ -773,14 +769,10 @@
           },
           "showNode": true,
           "selected_output": "text_output"
-        },
-        "measured": {
-          "width": 320,
-          "height": 661
         }
       },
       {
-        "id": "ConditionalRouter-uSU0C",
+        "id": "ConditionalRouter-eGQkD",
         "type": "genericNode",
         "position": {
           "x": 960,
@@ -788,7 +780,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ConditionalRouter-uSU0C",
+          "id": "ConditionalRouter-eGQkD",
           "type": "ConditionalRouter",
           "node": {
             "template": {
@@ -1083,14 +1075,10 @@
             "tool_mode": false
           },
           "showNode": true
-        },
-        "measured": {
-          "width": 320,
-          "height": 431
         }
       },
       {
-        "id": "CustomComponent-0WfNa",
+        "id": "CustomComponent-uFKzq",
         "type": "genericNode",
         "position": {
           "x": 1440,
@@ -1098,7 +1086,7 @@
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-0WfNa",
+          "id": "CustomComponent-uFKzq",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -1314,14 +1302,10 @@
             "tool_mode": false
           },
           "showNode": true
-        },
-        "measured": {
-          "width": 320,
-          "height": 387
         }
       },
       {
-        "id": "CustomComponent-Q5Slm",
+        "id": "CustomComponent-ddB5x",
         "type": "genericNode",
         "position": {
           "x": 1440,
@@ -1329,7 +1313,7 @@
         },
         "selected": false,
         "data": {
-          "id": "CustomComponent-Q5Slm",
+          "id": "CustomComponent-ddB5x",
           "type": "CustomComponent",
           "node": {
             "template": {
@@ -1434,14 +1418,10 @@
             "tool_mode": false
           },
           "showNode": true
-        },
-        "measured": {
-          "width": 320,
-          "height": 223
         }
       },
       {
-        "id": "ChatOutput-pTVwm",
+        "id": "ChatOutput-gDqyg",
         "type": "genericNode",
         "position": {
           "x": 1920,
@@ -1449,7 +1429,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-pTVwm",
+          "id": "ChatOutput-gDqyg",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -1745,14 +1725,10 @@
             "category": "input_output"
           },
           "showNode": true
-        },
-        "measured": {
-          "width": 320,
-          "height": 169
         }
       },
       {
-        "id": "ChatOutput-BdCAF",
+        "id": "ChatOutput-mgriH",
         "type": "genericNode",
         "position": {
           "x": 1920,
@@ -1760,7 +1736,7 @@
         },
         "selected": false,
         "data": {
-          "id": "ChatOutput-BdCAF",
+          "id": "ChatOutput-mgriH",
           "type": "ChatOutput",
           "node": {
             "base_classes": [
@@ -2056,10 +2032,6 @@
             "category": "input_output"
           },
           "showNode": true
-        },
-        "measured": {
-          "width": 320,
-          "height": 169
         }
       }
     ],
@@ -2070,7 +2042,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ChatInput",
-            "id": "ChatInput-IW816",
+            "id": "ChatInput-WtGHx",
             "name": "message",
             "output_types": [
               "Message"
@@ -2078,19 +2050,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ext:google:GoogleGenerativeAIComponent@official-3KvJe",
+            "id": "ext:google:GoogleGenerativeAIComponent@official-Dytq8",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ChatInput-IW816{œdataTypeœ:œChatInputœ,œidœ:œChatInput-IW816œ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-ext:google:GoogleGenerativeAIComponent@official-3KvJe{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-3KvJeœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ChatInput-WtGHx{œdataTypeœ:œChatInputœ,œidœ:œChatInput-WtGHxœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-ext:google:GoogleGenerativeAIComponent@official-Dytq8{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-Dytq8œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ChatInput-IW816",
-        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-IW816œ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ext:google:GoogleGenerativeAIComponent@official-3KvJe",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-3KvJeœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ChatInput-WtGHx",
+        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-WtGHxœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ext:google:GoogleGenerativeAIComponent@official-Dytq8",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-Dytq8œ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -2098,7 +2070,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ext:google:GoogleGenerativeAIComponent@official",
-            "id": "ext:google:GoogleGenerativeAIComponent@official-3KvJe",
+            "id": "ext:google:GoogleGenerativeAIComponent@official-Dytq8",
             "name": "text_output",
             "output_types": [
               "Message"
@@ -2106,19 +2078,19 @@
           },
           "targetHandle": {
             "fieldName": "input_text",
-            "id": "ConditionalRouter-uSU0C",
+            "id": "ConditionalRouter-eGQkD",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ext:google:GoogleGenerativeAIComponent@official-3KvJe{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-3KvJeœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}-ConditionalRouter-uSU0C{œfieldNameœ:œinput_textœ,œidœ:œConditionalRouter-uSU0Cœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ext:google:GoogleGenerativeAIComponent@official-Dytq8{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-Dytq8œ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}-ConditionalRouter-eGQkD{œfieldNameœ:œinput_textœ,œidœ:œConditionalRouter-eGQkDœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ext:google:GoogleGenerativeAIComponent@official-3KvJe",
-        "sourceHandle": "{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-3KvJeœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ConditionalRouter-uSU0C",
-        "targetHandle": "{œfieldNameœ:œinput_textœ,œidœ:œConditionalRouter-uSU0Cœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ext:google:GoogleGenerativeAIComponent@official-Dytq8",
+        "sourceHandle": "{œdataTypeœ:œext:google:GoogleGenerativeAIComponent@officialœ,œidœ:œext:google:GoogleGenerativeAIComponent@official-Dytq8œ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ConditionalRouter-eGQkD",
+        "targetHandle": "{œfieldNameœ:œinput_textœ,œidœ:œConditionalRouter-eGQkDœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -2126,7 +2098,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ConditionalRouter",
-            "id": "ConditionalRouter-uSU0C",
+            "id": "ConditionalRouter-eGQkD",
             "name": "false_result",
             "output_types": [
               "Message"
@@ -2134,19 +2106,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-0WfNa",
+            "id": "CustomComponent-uFKzq",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ConditionalRouter-uSU0C{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-uSU0Cœ,œnameœ:œfalse_resultœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-0WfNa{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-0WfNaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ConditionalRouter-eGQkD{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-eGQkDœ,œnameœ:œfalse_resultœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-uFKzq{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-uFKzqœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ConditionalRouter-uSU0C",
-        "sourceHandle": "{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-uSU0Cœ,œnameœ:œfalse_resultœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-0WfNa",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-0WfNaœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ConditionalRouter-eGQkD",
+        "sourceHandle": "{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-eGQkDœ,œnameœ:œfalse_resultœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-uFKzq",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-uFKzqœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -2154,7 +2126,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "ConditionalRouter",
-            "id": "ConditionalRouter-uSU0C",
+            "id": "ConditionalRouter-eGQkD",
             "name": "true_result",
             "output_types": [
               "Message"
@@ -2162,19 +2134,19 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "CustomComponent-Q5Slm",
+            "id": "CustomComponent-ddB5x",
             "inputTypes": [
               "Message"
             ],
             "type": "str"
           }
         },
-        "id": "reactflow__edge-ConditionalRouter-uSU0C{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-uSU0Cœ,œnameœ:œtrue_resultœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-Q5Slm{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-Q5Slmœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "reactflow__edge-ConditionalRouter-eGQkD{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-eGQkDœ,œnameœ:œtrue_resultœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-ddB5x{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-ddB5xœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ConditionalRouter-uSU0C",
-        "sourceHandle": "{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-uSU0Cœ,œnameœ:œtrue_resultœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-Q5Slm",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-Q5Slmœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+        "source": "ConditionalRouter-eGQkD",
+        "sourceHandle": "{œdataTypeœ:œConditionalRouterœ,œidœ:œConditionalRouter-eGQkDœ,œnameœ:œtrue_resultœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "CustomComponent-ddB5x",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œCustomComponent-ddB5xœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       },
       {
         "animated": false,
@@ -2182,7 +2154,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-0WfNa",
+            "id": "CustomComponent-uFKzq",
             "name": "output",
             "output_types": [
               "Message"
@@ -2190,7 +2162,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-pTVwm",
+            "id": "ChatOutput-gDqyg",
             "inputTypes": [
               "Data",
               "JSON",
@@ -2201,12 +2173,12 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-CustomComponent-0WfNa{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-0WfNaœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-pTVwm{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-pTVwmœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-CustomComponent-uFKzq{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-uFKzqœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-gDqyg{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-gDqygœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "CustomComponent-0WfNa",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-0WfNaœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-pTVwm",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-pTVwmœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "CustomComponent-uFKzq",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-uFKzqœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-gDqyg",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-gDqygœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       },
       {
         "animated": false,
@@ -2214,7 +2186,7 @@
         "data": {
           "sourceHandle": {
             "dataType": "CustomComponent",
-            "id": "CustomComponent-Q5Slm",
+            "id": "CustomComponent-ddB5x",
             "name": "output",
             "output_types": [
               "Message"
@@ -2222,7 +2194,7 @@
           },
           "targetHandle": {
             "fieldName": "input_value",
-            "id": "ChatOutput-BdCAF",
+            "id": "ChatOutput-mgriH",
             "inputTypes": [
               "Data",
               "JSON",
@@ -2233,12 +2205,12 @@
             "type": "other"
           }
         },
-        "id": "reactflow__edge-CustomComponent-Q5Slm{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-Q5Slmœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-BdCAF{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-BdCAFœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
+        "id": "reactflow__edge-CustomComponent-ddB5x{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-ddB5xœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-mgriH{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-mgriHœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}",
         "selected": false,
-        "source": "CustomComponent-Q5Slm",
-        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-Q5Slmœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "ChatOutput-BdCAF",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-BdCAFœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
+        "source": "CustomComponent-ddB5x",
+        "sourceHandle": "{œdataTypeœ:œCustomComponentœ,œidœ:œCustomComponent-ddB5xœ,œnameœ:œoutputœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-mgriH",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-mgriHœ,œinputTypesœ:[œDataœ,œJSONœ,œDataFrameœ,œTableœ,œMessageœ],œtypeœ:œotherœ}"
       }
     ],
     "viewport": {
