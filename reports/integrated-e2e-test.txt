@@ -1,0 +1,416 @@
+================================================================================
+SYNCARE INTEGRATED END-TO-END F1→F5 RUN — FIRST INTEGRATED EXECUTION (2026-10-06)
+================================================================================
+
+SYNTHETIC DEMO ONLY. All clinical data, patient profiles, and workflow artifacts
+are synthetic demonstrations. NOT clinically approved. NOT a calibrated risk
+prediction model. No medical diagnosis, dosage adjustments, or autonomous
+emergency advice. Mandatory human clinical oversight required.
+
+Host: Linux x86_64 | Langflow server http://127.0.0.1:7860 (pid 24668)
+Transport: Direct REST (curl/python urllib, --compressed); NOT MCP run_flow
+(30s stdio cap). Client timeout 240s. Zero Gemini 429s, zero network errors,
+zero retries needed.
+Review DB: /home/frxskie/langflow/syncare-review.sqlite3 (read-only URI mode=ro)
+Artifacts: /home/frxskie/Documents/trackover/.bob-work/e2e-*.json (39 files)
+Credential handling: LANGFLOW_API_KEY from lfx-mcp process env into restricted
+temp file (removed post-run). Astra creds resolved via langflow
+auth_utils.decrypt_api_key (in-venv, temp file removed). No credential values
+printed, written, or committed. Artifact secret scan: CLEAN.
+
+Live node IDs verified against GET /api/v1/flows/<id> — NO drift from the
+brief. F1: ChatInput-sapT9/ChatOutput-XJH2z. F2: ChatInput-WtGHx +
+ChatOutput-gDqyg/mgriH + CustomComponent-uFKzq. F3: ChatInput-Jk9Uf/
+ChatOutput-SnloB/qHwSE. F4: ChatInput-uSAbT/HumanInput-IvOz5/RunFlow-rGQR7.
+F5: ChatInput-MqA1 + all ChatOutputs.
+
+Patient: chf-high-e2e (FRESH — proves full-chain provenance including a NEW
+Astra collection syncare_f5_kb_2540df2692c22ee0 derived from
+sha256("chf-high-e2e")[:16] = 2540df2692c22ee0).
+
+--------------------------------------------------------------------------------
+1. CHAIN NARRATIVE (FRESH PATIENT chf-high-e2e)
+--------------------------------------------------------------------------------
+
+A1. F1 register_discharge_summary (dd096aae-e02c-4a36-b3c3-ec8c741b0e66)
+    Session: e2e-2026-10-06-f1 | Trace: 2a2be46a-0456-471d-99d4-f8f0a9391344
+    Latency: 1706ms | Status: PASS
+    Input: fixtures/discharge-chf-high.txt verbatim.
+    Output: score 7, tier HIGH, label demo-heuristic-v1, 8-key episode
+    (admission_type, admissions_prior_12m, comorbidity_count, diagnosis,
+    followup_needs, instructions, length_of_stay_days, medications).
+    All 4 risk_factors met: length_of_stay_days (6≥5,+2), admission_type
+    (emergency,+1), comorbidity_count (3≥3,+2), admissions_prior_12m (2≥2,+2).
+    Spans: Chat Input, Google Generative AI (1614ms),
+    SynCare Demo Discharge Risk Scorer (2ms), Chat Output.
+    Diagnosis augmented by F1 to "gagal jantung NYHA III, decompensatio".
+
+A2. F2 record_patient_checkin — ROUTINE (22698f53-9f32-4fc9-acc2-c53efdcd9f58)
+    Session: e2e-2026-10-06-f2-routine | Trace: ddae87ae-fe23-4533-a9c3-cee23dd561a9
+    Latency: 1356ms | Status: PASS
+    Input: "Merasa lebih baik, obat teratur"
+    Tweaks: CustomComponent-uFKzq {baseline_score: 7, patient_id: chf-high-e2e}
+    Output: action continue_monitoring, score 6, tier HIGH (unchanged),
+    next_checkin_days 1, patient_id chf-high-e2e.
+    Adjustments: symptoms empty → -1 (applied); symptom_count≥2 → 0 (not
+    applied); medication_adherence irregular → 0 (not applied).
+    Extraction: symptoms [], medication_adherence regular, red_flag false.
+    Label: demo-heuristic-v1.
+    Spans: Chat Input, Google Generative AI, If-Else,
+    SynCare Deterministic Check-in Scorer, Chat Output.
+
+A3. F2 record_patient_checkin — RED-FLAG (same flow)
+    Session: e2e-2026-10-06-f2-redflag | Trace: 5dfefd29-fd6e-4efd-aeb0-fd69bac0a277
+    Latency: 996ms | Status: PASS
+    Input: "dada saya sakit sekali seperti ditekan dan napas sesak berat"
+    Output (exactly 2 keys):
+    {"action":"escalate_immediately","reason":"dada saya sakit sekali seperti ditekan dan napas sesak berat"}
+    Spans: Chat Input, Google Generative AI, If-Else,
+    SynCare Red-flag Escalation Formatter, Chat Output.
+    (Scorer completely excluded — structural bypass proven.)
+
+A4. F3 draft_followup_plan (fb72ad45-b2ac-4979-a34c-c5e2f0725754)
+    Session: e2e-2026-10-06-f3 | Trace: 591759bf-41fa-4e13-a63c-18c31d49e47f
+    Latency: 1771ms | Status: PASS
+    Input: JSON {f1_scored_output: <FULL live A1 terminal payload>,
+    patient_id: chf-high-e2e, followup_date: 2026-10-13,
+    hotline: HOTLINE-DEMO-SINTETIS}
+    Output keys: care_intensity, disclaimer, label, missing_facts,
+    patient_id, plan_text, satuseshat, source_input, status, tier.
+    status: "DRAFT pending human approval"
+    label: demo-heuristic-v1
+    missing_facts: [] (all facts present)
+    care_intensity: ["Telepon perawat dalam 24 jam.", "Check-in setiap hari."]
+    satuseshat keys: careplan, servicerequest, task.
+    satuseshat.servicerequest.patientInstruction: "Tindak lanjut rutin pada
+    2026-10-13; kontak rutin HOTLINE-DEMO-SINTETIS. Menunggu persetujuan
+    manusia." priority: urgent.
+    NOTE (satuseshat quirk): the key is spelled "satuseshat" (one 's' after
+    'satu') throughout the F3 contract and code — this is the deliberate
+    field name, not a typo for "satusehat". The SynCare F5 retriever code
+    and F4 intake both reference it consistently as "satuseshat".
+    Spans: Chat Input, SynCare Plan Fact Gate, Google Generative AI,
+    SynCare Deterministic Draft Guard, Chat Output.
+
+A5. F4 review_care_plan — APPROVE via v2 background workflow
+    (b9413d2e-cb01-43e0-b83b-d4b1bb90a3a3)
+    Session: e2e-2026-10-06-f4-approve | Job: 983f8ea4-f509-4942-bfd0-963393f84a5a
+    Status: PASS
+    Sequence:
+      POST /api/v2/workflows mode=background → job queued → SUSPENDED (poll 1).
+      Pause event: human_input_required {
+        request_id: HumanInput-IvOz5:983f8ea4-...,
+        timeout_seconds: 300,
+        allowed_decisions: [approve, request_changes, escalate, fallback],
+        fallback_action: fallback,
+        paused_at: <job created>}
+      POST /api/v2/workflows/<job_id>/resume {
+        decision: {action_id: approve, actor: synthetic_reviewer,
+        reviewer_note: "Persetujuan sintetis integrated e2e run 2026-10-06."}}
+      → "resuming" → completed.
+    Terminal output:
+      {"action":"approved",
+       "confirmation":"Draf rencana tindak lanjut disetujui oleh peninjau
+       manusia dan disimpan dalam SQLite.",
+       "patient_id":"chf-high-e2e",
+       "approved_at":"2026-10-06T09:47:27.507036+00:00",
+       "reviewer_note":"Persetujuan sintetis integrated e2e run 2026-10-06."}
+    DB assertions:
+      approved_plans: 1→2 (gained chf-high-e2e at approved_at timestamp) ✓
+      audit_log: 3→4 (gained Approve at SAME timestamp 09:47:27.507036) ✓
+    Full event kinds: vertices_sorted, build_start, end_vertex x3,
+    human_input_required, vertices_sorted, build_start, end_vertex x3,
+    output, end.
+
+A7. F5 answer_care_questions — TWO LEGS on Astra (live)
+    (4fff7e76-d710-4662-9b8e-087b5182a245)
+    Run during the A6 timeout wait window.
+
+    (i) Grounded salt/diet question
+        Session: e2e-2026-10-06-f5-ans
+        Trace: 1f91c757-55cc-4c5b-aa54-ca85a97c686b | Latency: 28131ms
+        Input: {patient_id: chf-high-e2e, query: "Bagaimana anjuran konsumsi
+        garam dan makanan sehari-hari untuk saya di rumah?"}
+        Status: PASS — grounded cited answer via ChatOutput-Ans1.
+        Answer head: "Jawaban demo sintetis berdasarkan rencana tindak lanjut
+        yang telah disetujui melalui alur kerja sintetis (bukan persetujuan
+        klinis) dan draf edukasi yang belum disetujui; bukan nasihat medis.
+        Pola Makan dan Pembatasan Garam..."
+        4 citation anchors in answer text:
+          [hf-aftercare:section:4#2 | draf_edukasi_tidak_disetujui]
+          [hf-aftercare:section:4#3 | draf_edukasi_tidak_disetujui]
+          (plus approved_plan.instructions chunk "batasi garam" consumed)
+          (plus hf-aftercare:section:2, section:3 retrieved)
+        astra_status (VERBATIM from retriever payload):
+        === BEGIN RAW ===
+        {
+          "backend_requested": "astra",
+          "backend_used": "astra",
+          "astra_collection": "syncare_f5_kb_2540df2692c22ee0",
+          "astra_keyspace": "default_keyspace",
+          "dimension_choice": "dimension 3072 (cosine) confirmed on 'syncare_f5_kb_2540df2692c22ee0'"
+        }
+        === END RAW ===
+        Retriever payload: collection syncare_f5_2540df2692c22ee0,
+        embedding_model models/gemini-embedding-001, k=4, vector_backend astra.
+        All 4 retrieved chunks patient_id chf-high-e2e:
+          - hf-aftercare:section:4 (approved false, protocol, dist 0.88392115)
+          - chf-high-e2e:instruction:1 (approved true, approved_plan.instructions, dist 0.88358855)
+          - hf-aftercare:section:2 (approved false, protocol, dist 0.8633642)
+          - hf-aftercare:section:3 (approved false, protocol, dist 0.8501626)
+        approved_at CHAIN-CONSUMPTION PROOF:
+        The retriever's fail-closed SQL gate (code line 275-289) requires BOTH
+        (1) approved_plans row with patient_id match AND (2) audit_log Approve
+        row with matching timestamp+patient_id. The A5 approval at
+        2026-10-06T09:47:27.507036+00:00 satisfied both gates. The A8 Astra
+        probe confirmed all 8 approved chunks in the new collection carry
+        metadata.approved_at = 2026-10-06T09:47:27.507036+00:00 — exactly the
+        A5 approval timestamp, proving the chain consumed THIS run's approval
+        (not the old chf-high approval from 2026-10-05).
+        NOTE: the retriever's emitted payload (emit_retrieved, code line
+        388-398) omits per-chunk approved_at from the retrieved list (stores
+        it only in Astra metadata); the in-payload provenance proof is the
+        fail-closed SQL gate + the A8 Astra metadata probe.
+        Spans: Chat Input, SynCare F5 Red-Flag Guard (1ms),
+        SynCare F5 Patient-Scope Retriever (26278ms),
+        SynCare F5 Grounded Answer Verifier (1834ms), Chat Output.
+
+    (ii) Out-of-scope refusal
+        Session: e2e-2026-10-06-f5-ref
+        Trace: 3c470fd0-3878-4ea5-8a5d-7b0b4d53e981 | Latency: 10619ms
+        Input: {patient_id: chf-high-e2e, query: "apakah saya kanker?"}
+        Status: PASS — byte-exact refusal via ChatOutput-Ref2.
+        Refusal text (byte-exact match confirmed programmatically):
+        "Maaf, pertanyaan itu di luar cakupan rencana Anda. Silakan tanyakan
+        ke perawat Anda atau hubungi hotline."
+        Emitted by SynCareAnswerVerifier-V1 (scope=out_of_scope).
+        Spans: Chat Input, SynCare F5 Red-Flag Guard (2ms),
+        SynCare F5 Patient-Scope Retriever (9462ms),
+        SynCare F5 Grounded Answer Verifier (1133ms), Chat Output.
+
+--------------------------------------------------------------------------------
+2. A8 ASTRA PROBES (IN-VENV, astrapy DataAPIClient)
+--------------------------------------------------------------------------------
+
+Method: Credentials resolved via langflow auth_utils.decrypt_api_key on the
+server DB Variable table (ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN).
+Never printed. astrapy DataAPIClient with keyspace default_keyspace.
+
+NEW collection syncare_f5_kb_2540df2692c22ee0:
+  exists: true
+  doc_count: 25
+  patient_ids: ["chf-high-e2e"]
+  metadata_key_sets: {"approved|approved_at|chunk_id|patient_id|provenance|source": 25}
+  (25 docs = 8 approved plan chunks + 17 protocol draft chunks; all chf-high-e2e)
+
+Filter {"metadata.patient_id": "chf-high"} on new collection:
+  count: 0 — PASS (zero docs match old patient; patient-scope isolation proven)
+
+OLD collection syncare_f5_kb_6b1aeaf549d10ed3:
+  exists: true
+  doc_count: 25
+  patient_ids: ["chf-high"]
+  metadata_key_sets: {"approved|approved_at|chunk_id|patient_id|provenance|source": 25}
+  — PASS (old collection unchanged: 25 docs, all chf-high)
+
+New collection approved chunks approved_at:
+  All 8 approved chunks carry metadata.approved_at =
+  "2026-10-06T09:47:27.507036+00:00" (exactly the A5 approval timestamp).
+
+sha256 hashes:
+  sha256("chf-high")[:16]      = 6b1aeaf549d10ed3
+  sha256("chf-high-e2e")[:16]  = 2540df2692c22ee0
+
+--------------------------------------------------------------------------------
+3. A6 + A9 F4 TIMEOUT/FALLBACK ACCEPTANCE (FULL DETAIL)
+--------------------------------------------------------------------------------
+
+A6. F4 timeout test — SUSPENDED, not resumed
+    Session: e2e-2026-10-06-f4-timeout | Job: a97f6a44-a7c0-4ae6-a836-110958c8ff1e
+    Input: SAME A4 draft JSON (string)
+    T0 (created): 2026-10-06T09:48:16.567539+00:00 (epoch 1791280096.5858)
+    Pause event: human_input_required {
+      request_id: HumanInput-IvOz5:a97f6a44-...,
+      timeout_seconds: 300,
+      fallback_action: fallback,
+      paused_at: 2026-10-06T09:48:16.727071+00:00,
+      allowed_decisions: [approve, request_changes, escalate, fallback]}
+
+    T0+310s EVIDENCE (captured at 2026-10-06T09:56:10Z, elapsed 473.8s >> 310s):
+      job status: suspended
+      event kinds: [vertices_sorted, build_start, end_vertex, end_vertex,
+      end_vertex, human_input_required]
+      human_input_expired present: false
+      output event present: false
+      end event present: false
+      VERDICT: NO autonomous fire — job still SUSPENDED with only the pause
+      event. Lazy timeout design confirmed: no background watchdog fires at
+      paused_at+timeout_seconds; reroute happens only at resume time.
+
+A9. F4 late resume after timeout — fallback branch
+    Same job a97f6a44-a7c0-4ae6-a836-110958c8ff1e, resumed ~20 min after T0.
+    Resume request:
+      {"request_id":"HumanInput-IvOz5:a97f6a44-...",
+       "decision":{"action_id":"approve",
+       "actor":"synthetic_reviewer",
+       "reviewer_note":"late approval after timeout — must reroute to fallback"}}
+    Resume response: {"status":"resuming","message":"Resume accepted"}
+    Terminal output:
+      {"action":"escalate_to_clinician","plan_json":{...}}
+      — FALLBACK branch, NOT "approved". PASS (assertion a).
+
+    DB assertions:
+      (b) audit_log gained Escalate row at
+          2026-10-06T10:08:21.572281+00:00 (4→5). PASS.
+          Audit payload decision.action_id recorded as "fallback" (rerouted
+          from approve by reroute_decision_on_timeout).
+      (c) approved_plans count UNCHANGED at 2 (chf-high + chf-high-e2e).
+          Late approve did NOT add a row. PASS.
+
+    (d) human_input_expired event — SEE FINDING BELOW.
+
+    Event kinds for full late run: vertices_sorted, build_start, end_vertex x3,
+    human_input_required, vertices_sorted, build_start, end_vertex x3,
+    output, end.
+
+=== BEGIN RAW (pause event, minus prompt noise) ===
+{
+  "request_id": "HumanInput-IvOz5:a97f6a44-a7c0-4ae6-a836-110958c8ff1e",
+  "kind": "node_input",
+  "options": [
+    {"action_id": "approve", "label": "Approve"},
+    {"action_id": "request_changes", "label": "Request Changes"},
+    {"action_id": "escalate", "label": "Escalate"}
+  ],
+  "allowed_decisions": ["approve", "request_changes", "escalate", "fallback"],
+  "timeout_seconds": 300,
+  "fallback_action": "fallback",
+  "paused_at": "2026-10-06T09:48:16.727071+00:00"
+}
+=== END RAW ===
+
+=== BEGIN RAW (audit payload for late Escalate row, head) ===
+{"request_id": "HumanInput-IvOz5:a97f6a44-a7c0-4ae6-a836-110958c8ff1e",
+ "session_id": "e2e-2026-10-06-f4-timeout",
+ "decision": {"action_id": "fallback", "actor": "synthetic_reviewer",
+   "reviewer_note": "late approval after timeout — must reroute to fallback"},
+ "plan_json": {"plan_text": "Draf tindak lanjut. Diagnosis tercatat: ..."}}
+=== END RAW ===
+
+--------------------------------------------------------------------------------
+4. FINDING (LOW SEVERITY — TELEMETRY GAP, NOT BEHAVIOR GAP)
+--------------------------------------------------------------------------------
+
+Assertion (d): "job event log contains human_input_expired
+{requested_action: approve, rerouted_to: fallback, timeout_seconds: 300}"
+
+ACTUAL: The event log for job a97f6a44-a7c0-4ae6-a836-110958c8ff1e contains
+NO human_input_expired event. Event kinds are:
+[vertices_sorted, build_start, end_vertex x3, human_input_required,
+vertices_sorted, build_start, end_vertex x3, output, end].
+
+ROOT CAUSE: The human_input_expired event emission exists ONLY in the lfx
+serve durable path (lfx/cli/serve_durable.py:275-284, DurableServeWorkflowHost).
+This langflow server runs via `langflow run` (uv), which uses the
+BackgroundExecutionService + runner.py path. On this path, the reroute is
+applied silently in langflow/api/build.py:524
+(decision = reroute_decision_on_timeout(pending, resume["decision"])) and
+injected into graph.human_input_decisions — but NO human_input_expired or
+human_input_decision event is emitted to the job event log.
+
+FUNCTIONAL IMPACT: NONE. All functional assertions pass:
+  (a) terminal escalate_to_clinician via fallback ✓
+  (b) audit Escalate row at 2026-10-06T10:08:21.572281+00:00 ✓
+  (c) approved_plans unchanged at 2 ✓
+The reroute logic (reroute_decision_on_timeout in lfx/run/hitl.py:53-70)
+correctly detected elapsed > timeout_seconds and rerouted approve→fallback.
+The audit_log payload records decision.action_id='fallback'. The missing
+piece is purely the event-log telemetry that would let a /events reader
+distinguish an expiry-triggered reroute from a direct fallback decision.
+
+CODE EVIDENCE:
+  reroute_implementation: lfx/run/hitl.py:53-70
+  (lazy timeout, compares now vs paused_at+timeout_seconds)
+  silent_apply: langflow/api/build.py:524
+  event_emit_only_in_serve_durable: lfx/cli/serve_durable.py:275-284
+
+--------------------------------------------------------------------------------
+5. BOB VISIBILITY LEG (A10)
+--------------------------------------------------------------------------------
+
+NOT EXECUTED. cua-driver MCP tools ARE available (mcp__cua_driver_*), and the
+IBM Bob IDE was detected (pid 25510, window_id 94853485167664, title
+"Welcome - bob-hackathon - IBM Bob", app bobide/Electron). Four blockers
+prevented driving Bob's chat:
+
+1. AT-SPI tree exposes only the root frame (1 element) — Electron content
+   not walkable on this Hyprland/Wayland setup.
+2. CDP bind refused: "pid 25510 is not a recognized browser process" (Bob
+   launched without --remote-debugging-port).
+3. bring_to_front refused: "production Hyprland input plugin is unavailable".
+4. Active model does not support image input — screenshots captured but
+   cannot be visually interpreted for chat field location.
+
+REST acceptance (A7) stands alone as the F5 execution evidence; Bob's MCP
+run_flow would hit the same server execution path.
+
+--------------------------------------------------------------------------------
+6. DB BEFORE/AFTER TABLE
+--------------------------------------------------------------------------------
+
+                        approved_plans    audit_log
+BEFORE (pre-run)              1               3
+  (chf-high, 2026-10-05T08:21:37; Approve/Request Changes/Escalate)
+
+AFTER A5 approve              2               4
+  (+chf-high-e2e, 2026-10-06T09:47:27.507036; +Approve same timestamp)
+
+AFTER A9 late resume          2 (unchanged)   5
+  (approved_plans unchanged; +Escalate at 2026-10-06T10:08:21.572281)
+
+--------------------------------------------------------------------------------
+7. RETRIES & FALLBACKS
+--------------------------------------------------------------------------------
+
+Gemini 429 or network errors: 0
+Retries needed: 0
+F4 timeout reroute: The A6 job's late resume was rerouted from approve→fallback
+  by reroute_decision_on_timeout (lfx/run/hitl.py:53). This is the designed
+  fallback, not an error.
+F5 retriever fail-closed: No failures — the fail-closed SQL gate passed on
+  first attempt for chf-high-e2e (approved plan + audit Approve row both
+  present).
+
+--------------------------------------------------------------------------------
+8. ARTIFACT LIST (39 e2e-* files in .bob-work/)
+--------------------------------------------------------------------------------
+
+e2e-a1-f1-payload.json          e2e-a5-f4-approve-events-all.txt
+e2e-a1-f1-run.json              e2e-a5-f4-approve-pause-events.txt
+e2e-a1-f1-trace.json            e2e-a5-f4-approve-resume.json
+e2e-a2-f2-routine-payload.json  e2e-a5-f4-approve-start.json
+e2e-a2-f2-routine-run.json      e2e-a5-f4-approve-suspended.json
+e2e-a2-f2-routine-trace.json    e2e-a5-f4-approve-terminal.json
+e2e-a3-f2-redflag-payload.json  e2e-a5-db-after.json
+e2e-a3-f2-redflag-run.json      e2e-a6-f4-timeout-events-at-T0-310.txt
+e2e-a3-f2-redflag-trace.json    e2e-a6-f4-timeout-pause-events.txt
+e2e-a4-f3-draft.json            e2e-a6-f4-timeout-start.json
+e2e-a4-f3-run.json              e2e-a6-f4-timeout-status-at-T0-310.json
+e2e-a4-f3-trace.json            e2e-a6-f4-timeout-suspended.json
+e2e-a7-f5-cancer-refusal-run.json  e2e-a9-f4-late-resume-events.txt
+e2e-a7-f5-cancer-refusal-text.txt  e2e-a9-f4-late-resume-terminal.json
+e2e-a7-f5-ref-trace.json        e2e-a9-f4-late-resume.json
+e2e-a7-f5-salt-answer.txt       e2e-a9-finding-human-input-expired-event-absent.json
+e2e-a7-f5-salt-retriever.json   e2e-a8-astra-probes.json
+e2e-a7-f5-salt-run.json         e2e-bob-f5-evidence.json
+e2e-a7-f5-salt-trace.json       e2e-db-before.json
+                                 e2e-db-after.json
+
+.bob-work stays untracked (not committed).
+
+================================================================================
+INTEGRATED F1→F5 E2E: FIRST FULL-CHAIN EXECUTION PASS 2026-10-06 (fresh patient
+chf-high-e2e, Astra live); F4 300s LAZY TIMEOUT→FALLBACK ACCEPTANCE PASS
+(functional), human_input_expired telemetry gap documented; Bob GUI leg not
+executed (tooling).
+================================================================================
